@@ -7,9 +7,18 @@ use App\Models\PostCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Services\KeywordGenerator;
 
 class PostController extends Controller
 {
+
+    protected $keywordGenerator;
+
+    public function __construct(KeywordGenerator $keywordGenerator)
+    {
+        $this->keywordGenerator = $keywordGenerator;
+    }
+
     public function index()
     {
         $postsList = Post::paginate(18);
@@ -111,7 +120,7 @@ class PostController extends Controller
             $post->content = $request->content;
             $post->status = $request->status;
             $post->alias = $request->alias ?? Str::slug($request->title);
-            $post->keywords = $request->keywords;
+            $post->keywords = $request->keywords ?? $this->keywordGenerator->generate($request->content, $request->language);
             $post->seo_description = $request->seo_description ?? Str::limit(strip_tags($request->content), 160, '...');
             $post->author_id = $user->id;
             $post->language = $request->language;
@@ -132,6 +141,7 @@ class PostController extends Controller
             $post->title = $request->title;
             $post->content = $request->content;
             $post->alias = Str::slug($request->title);
+            $post->keywords = $this->keywordGenerator->generate($request->content, $request->language);
             $post->seo_description = Str::limit(strip_tags($request->content), 160, '...');
             $post->category_id = $request->category_id;
             $post->save();
@@ -184,7 +194,7 @@ class PostController extends Controller
             $post->content = $request->content;
             $post->status = $request->status;
             $post->alias = $request->alias ?? Str::slug($request->title);
-            $post->keywords = $request->keywords;
+            $post->keywords = $request->keywords ?? $this->keywordGenerator->generate($request->content, $request->language);
             $post->seo_description = $request->seo_description ?? Str::limit(strip_tags($request->content), 160, '...');
             $post->reviewer_id = $user->id;
             $post->language = $request->language;
@@ -205,6 +215,7 @@ class PostController extends Controller
             $post->title = $request->title;
             $post->content = $request->content;
             $post->alias = Str::slug($request->title);
+            $post->keywords = $this->keywordGenerator->generate($request->content, $request->language);
             $post->seo_description = Str::limit(strip_tags($request->content), 160, '...');
             $post->category_id = $request->category_id;
         }
