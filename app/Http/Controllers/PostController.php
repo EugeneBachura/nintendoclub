@@ -161,7 +161,7 @@ class PostController extends Controller
 
         // Проверка прав на редактирование
         if ($post->author_id !== auth()->id() && !auth()->user()->hasAnyRole(['review_editor', 'administrator'])) {
-            return redirect()->back()->with('error', 'У вас нет прав на редактирование этого поста.');
+            return redirect()->back()->with('error', 'You do not have permission to edit this post.');
         }
 
         // Определение правил на основе роли пользователя
@@ -191,7 +191,7 @@ class PostController extends Controller
             $post->category_id = $request->category_id;
         } else {
             if ($post->author_id != $user->id) {
-                return redirect()->route('post.index')->with('error', 'Вы не можете редатировать чужую запись.');
+                return redirect()->route('post.index')->with('error', 'You can\'t edit someone else\'s post.');
             }
             $request->validate([
                 'status' => 'required|' . $statusRules,
