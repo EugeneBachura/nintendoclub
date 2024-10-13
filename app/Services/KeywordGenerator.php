@@ -2,12 +2,8 @@
 
 namespace App\Services;
 
-use TextAnalysis\Tokenizers\GeneralTokenizer;
 use TextAnalysis\Analysis\FreqDist;
 use TextAnalysis\Filters\StopWordsFilter;
-use TextAnalysis\Utilities\Text;
-use TextAnalysis\Documents\TokensDocument;
-use TextAnalysis\Stemmer\PorterStemmer;
 
 class KeywordGenerator
 {
@@ -27,9 +23,8 @@ class KeywordGenerator
         // Приводим текст к нижнему регистру
         $cleanedContent = mb_strtolower($cleanedContent);
 
-        // Токенизация текста
-        $tokenizer = new GeneralTokenizer();
-        $tokens = $tokenizer->tokenize($cleanedContent);
+        // Разбиваем текст на токены (слова) с использованием встроенных функций PHP
+        $tokens = preg_split('/\s+/', $cleanedContent, -1, PREG_SPLIT_NO_EMPTY);
 
         // Удаление стоп-слов
         $stopWords = $this->getStopWords($language);
