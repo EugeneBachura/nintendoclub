@@ -6,9 +6,19 @@ use App\Models\Post;
 use App\Models\PostCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use App\Services\KeywordGenerator;
 
 class PostController extends Controller
 {
+
+    protected $keywordGenerator;
+
+    public function __construct(KeywordGenerator $keywordGenerator)
+    {
+        $this->keywordGenerator = $keywordGenerator;
+    }
+
     public function index()
     {
         $postsList = Post::paginate(18);
@@ -86,7 +96,7 @@ class PostController extends Controller
         $userLevel = $user->profile->level ?? 0;
 
         if ($userLevel < 3) {
-            return redirect()->back()->with('error', 'У вас недостаточно прав для создания поста.');
+            return redirect()->back()->with('error', 'Your level is too low to create a post. You need a level 3.');
         }
 
         // Определение правил на основе роли пользователя
@@ -100,7 +110,7 @@ class PostController extends Controller
                 'image' => 'nullable|image|max:5000',
                 'keywords' => 'nullable|string|max:255',
                 'seo_description' => 'nullable|string|max:1000',
-                'alias' => 'required|string|unique:posts',
+                'alias' => 'nullable|string|unique:posts',
                 'language' => 'required|string|max:2',
                 'category_id' => 'required|integer|exists:post_categories,id',
             ]);
@@ -109,9 +119,9 @@ class PostController extends Controller
             $post->title = $request->title;
             $post->content = $request->content;
             $post->status = $request->status;
-            $post->alias = $request->alias;
-            $post->keywords = $request->keywords;
-            $post->seo_description = $request->seo_description;
+            $post->alias = $request->alias ?? Str::slug($request->title);
+            $post->keywords = $request->keywords ?? $this->keywordGenerator->generate($request->content, $request->language);
+            $post->seo_description = $request->seo_description ?? Str::limit(strip_tags($request->content), 160, '...');
             $post->author_id = $user->id;
             $post->language = $request->language;
             $post->category_id = $request->category_id;
@@ -130,6 +140,9 @@ class PostController extends Controller
             $post->language = app()->getLocale();
             $post->title = $request->title;
             $post->content = $request->content;
+            $post->alias = Str::slug($request->title);
+            $post->keywords = $this->keywordGenerator->generate($request->content, $request->language);
+            $post->seo_description = Str::limit(strip_tags($request->content), 160, '...');
             $post->category_id = $request->category_id;
             $post->save();
         }
@@ -141,7 +154,7 @@ class PostController extends Controller
             $post->save();
         }
 
-        return redirect()->route('post.index')->with('success', 'Пост успешно создан и отправлен на ревью.');
+        return redirect()->route('post.index')->with('success', 'Post created successfully and submitted for review.');
     }
 
     public function edit($id)
@@ -158,7 +171,7 @@ class PostController extends Controller
 
         // Проверка прав на редактирование
         if ($post->author_id !== auth()->id() && !auth()->user()->hasAnyRole(['review_editor', 'administrator'])) {
-            return redirect()->back()->with('error', 'У вас нет прав на редактирование этого поста.');
+            return redirect()->back()->with('error', 'You do not have permission to edit this post.');
         }
 
         // Определение правил на основе роли пользователя
@@ -172,7 +185,7 @@ class PostController extends Controller
                 'image' => 'nullable|image|max:5000',
                 'keywords' => 'nullable|string|max:255',
                 'seo_description' => 'nullable|string|max:1000',
-                'alias' => 'required|string|unique:posts,alias,' . $post->id, // Исключаем текущий пост из проверки',
+                'alias' => 'nullable|string|unique:posts,alias,' . $post->id, // Исключаем текущий пост из проверки',
                 'language' => 'required|string|max:2',
                 'category_id' => 'required|integer|exists:post_categories,id',
             ]);
@@ -180,15 +193,15 @@ class PostController extends Controller
             $post->title = $request->title;
             $post->content = $request->content;
             $post->status = $request->status;
-            $post->alias = $request->alias;
-            $post->keywords = $request->keywords;
-            $post->seo_description = $request->seo_description;
+            $post->alias = $request->alias ?? Str::slug($request->title);
+            $post->keywords = $request->keywords ?? $this->keywordGenerator->generate($request->content, $request->language);
+            $post->seo_description = $request->seo_description ?? Str::limit(strip_tags($request->content), 160, '...');
             $post->reviewer_id = $user->id;
             $post->language = $request->language;
             $post->category_id = $request->category_id;
         } else {
             if ($post->author_id != $user->id) {
-                return redirect()->route('post.index')->with('error', 'Вы не можете редатировать чужую запись.');
+                return redirect()->route('post.index')->with('error', 'You can\'t edit someone else\'s post.');
             }
             $request->validate([
                 'status' => 'required|' . $statusRules,
@@ -201,6 +214,9 @@ class PostController extends Controller
             $post->language = app()->getLocale();
             $post->title = $request->title;
             $post->content = $request->content;
+            $post->alias = Str::slug($request->title);
+            $post->keywords = $this->keywordGenerator->generate($request->content, $request->language);
+            $post->seo_description = Str::limit(strip_tags($request->content), 160, '...');
             $post->category_id = $request->category_id;
         }
 
@@ -217,7 +233,7 @@ class PostController extends Controller
 
         $post->save();
 
-        return redirect()->route('post.index')->with('success', 'Пост успешно обновлен.');
+        return redirect()->route('post.index')->with('success', 'Post updated successfully.');
     }
 
     public function destroy($id)
