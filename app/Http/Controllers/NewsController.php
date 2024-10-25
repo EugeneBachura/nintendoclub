@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Services\KeywordGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,13 @@ use HTMLPurifier_Config;
 
 class NewsController extends Controller
 {
+    protected $keywordGenerator;
+
+    public function __construct(KeywordGenerator $keywordGenerator)
+    {
+        $this->keywordGenerator = $keywordGenerator;
+    }
+
     public function index()
     {
         if (auth()->user()->hasRole(['editor'])) {
@@ -121,13 +129,18 @@ class NewsController extends Controller
                 $cleanHtml = strip_tags($dirtyHtml, $allowedTags);
                 $cleanHtml = $this->sanitizeImageTags($cleanHtml);
                 $cleanHtml = str_replace("'", "&apos;", $cleanHtml);
+
+                // Генерация ключевых слов и SEO-описания, если не указаны
+                $keywords = $request->input("{$lang}_keywords") ?? $this->keywordGenerator->generate($cleanHtml, $lang);
+                $seoDescription = $request->input("{$lang}_seo_description") ?? Str::limit(strip_tags($cleanHtml), 160, '...');
+
                 $translation = $news->translations()->updateOrCreate(
                     ['locale' => $lang],
                     [
                         'title' => $request->input("{$lang}_title"),
                         'content' => $cleanHtml,
-                        'keywords' => $request->input("{$lang}_keywords") ?? null,
-                        'seo_description' => $request->input("{$lang}_seo_description") ?? null
+                        'keywords' => $keywords,
+                        'seo_description' => $seoDescription
                     ]
                 );
             }
