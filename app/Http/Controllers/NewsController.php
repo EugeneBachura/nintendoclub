@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 
@@ -47,7 +48,7 @@ class NewsController extends Controller
 
         $validator = Validator::make($request->all(), [
             'status' => 'required|' . $statusRules,
-            'alias' => 'required|string|unique:news',
+            'alias' => 'nullable|string|unique:news',
             'image' => 'nullable|image|mimes:jpg,jpeg|dimensions:min_width=800,min_height=400,max_width=800,max_height=400|max:500',
             'video' => 'nullable|string|max:255',
             'en_title' => 'nullable|string|max:255',
@@ -85,8 +86,22 @@ class NewsController extends Controller
         $news = new News();
         $news->status = $request->status;
         $news->author_id = auth()->id(); // Пример использования ID авторизованного пользователя
-        $news->alias = $request->alias;
         $news->video = $request->video;
+
+        // Генерация алиаса, если не указан
+        if ($request->alias) {
+            $news->alias = $request->alias;
+        } else {
+            // Используем английский заголовок или любой доступный
+            $aliasSource = $request->input('en_title') ?? $request->input('ru_title') ?? $request->input('pl_title');
+            $news->alias = Str::slug($aliasSource);
+        }
+
+        // Проверяем уникальность алиаса
+        $existingAlias = News::where('alias', $news->alias)->exists();
+        if ($existingAlias) {
+            $news->alias .= '-' . time();
+        }
 
         if ($request->hasFile('image')) {
             $imageExtension = $request->image->extension();
