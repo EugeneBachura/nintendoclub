@@ -3,15 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Services\KeywordGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 
 class NewsController extends Controller
 {
+    protected $keywordGenerator;
+
+    public function __construct(KeywordGenerator $keywordGenerator)
+    {
+        $this->keywordGenerator = $keywordGenerator;
+    }
+
     public function index()
     {
         if (auth()->user()->hasRole(['editor'])) {
@@ -47,7 +56,7 @@ class NewsController extends Controller
 
         $validator = Validator::make($request->all(), [
             'status' => 'required|' . $statusRules,
-            'alias' => 'required|string|unique:news',
+            'alias' => 'nullable|string|unique:news',
             'image' => 'nullable|image|mimes:jpg,jpeg|dimensions:min_width=800,min_height=400,max_width=800,max_height=400|max:500',
             'video' => 'nullable|string|max:255',
             'en_title' => 'nullable|string|max:255',
@@ -85,8 +94,22 @@ class NewsController extends Controller
         $news = new News();
         $news->status = $request->status;
         $news->author_id = auth()->id(); // Пример использования ID авторизованного пользователя
-        $news->alias = $request->alias;
         $news->video = $request->video;
+
+        // Генерация алиаса, если не указан
+        if ($request->alias) {
+            $news->alias = $request->alias;
+        } else {
+            // Используем английский заголовок или любой доступный
+            $aliasSource = $request->input('en_title') ?? $request->input('ru_title') ?? $request->input('pl_title');
+            $news->alias = Str::slug($aliasSource);
+        }
+
+        // Проверяем уникальность алиаса
+        $existingAlias = News::where('alias', $news->alias)->exists();
+        if ($existingAlias) {
+            $news->alias .= '-' . time();
+        }
 
         if ($request->hasFile('image')) {
             $imageExtension = $request->image->extension();
@@ -106,13 +129,18 @@ class NewsController extends Controller
                 $cleanHtml = strip_tags($dirtyHtml, $allowedTags);
                 $cleanHtml = $this->sanitizeImageTags($cleanHtml);
                 $cleanHtml = str_replace("'", "&apos;", $cleanHtml);
+
+                // Генерация ключевых слов и SEO-описания, если не указаны
+                $keywords = $request->input("{$lang}_keywords") ?? $this->keywordGenerator->generate($cleanHtml, $lang);
+                $seoDescription = $request->input("{$lang}_seo_description") ?? Str::limit(strip_tags($cleanHtml), 160, '...');
+
                 $translation = $news->translations()->updateOrCreate(
                     ['locale' => $lang],
                     [
                         'title' => $request->input("{$lang}_title"),
                         'content' => $cleanHtml,
-                        'keywords' => $request->input("{$lang}_keywords") ?? null,
-                        'seo_description' => $request->input("{$lang}_seo_description") ?? null
+                        'keywords' => $keywords,
+                        'seo_description' => $seoDescription
                     ]
                 );
             }
@@ -136,7 +164,7 @@ class NewsController extends Controller
 
         // Проверка прав на редактирование
         if ($news->author_id !== auth()->id() && !auth()->user()->hasAnyRole(['review_editor', 'administrator'])) {
-            return redirect()->back()->with('error', 'У вас нет прав на редактирование этогой новости.');
+            return redirect()->back()->with('error', 'You do not have permissions to edit this news.');
         }
 
         // Определение доступных статусов на основе роли пользователя
@@ -149,7 +177,7 @@ class NewsController extends Controller
 
         $validator = Validator::make($request->all(), [
             'status' => 'required|' . $statusRules,
-            'alias' => 'required|string|unique:news,alias,' . $news->id, // Исключаем текущую новость из проверки
+            'alias' => 'nullable|string|unique:news,alias,' . $news->id, // Исключаем текущую новость из проверки
             'image' => 'nullable|image|mimes:jpg,jpeg|dimensions:min_width=800,min_height=400,max_width=800,max_height=400|max:500',
             'video' => 'nullable|string|max:255',
             'en_title' => 'nullable|string|max:255',
@@ -165,22 +193,6 @@ class NewsController extends Controller
             'ru_seo_description' => 'nullable|string',
             'pl_seo_description' => 'nullable|string',
         ]);
-
-        // Получите неочищенный HTML-контент
-        $dirtyHtmlEn = $request->input('en_content');
-        $dirtyHtmlRu = $request->input('ru_content');
-        $dirtyHtmlPl = $request->input('pl_content');
-
-        // Очистите HTML-контент, разрешив только теги b, i и img
-        $allowedTags = '<b><i><img><br><p>';
-        $cleanHtmlEn = strip_tags($dirtyHtmlEn, $allowedTags);
-        $cleanHtmlRu = strip_tags($dirtyHtmlRu, $allowedTags);
-        $cleanHtmlPl = strip_tags($dirtyHtmlPl, $allowedTags);
-
-        // Далее убедитесь, что все теги img имеют безопасные атрибуты src, alt и title
-        $cleanHtmlEn = $this->sanitizeImageTags($cleanHtmlEn);
-        $cleanHtmlRu = $this->sanitizeImageTags($cleanHtmlRu);
-        $cleanHtmlPl = $this->sanitizeImageTags($cleanHtmlPl);
 
         // Валидация зависимых полей
         $languages = ['en', 'ru', 'pl']; // Список поддерживаемых языков
@@ -201,17 +213,32 @@ class NewsController extends Controller
         }
 
         $news->status = $request->status;
-        $news->alias = $request->alias;
-        $news->reviewer_id = auth()->id(); // Пример использования ID авторизованного пользователя
-        $news->alias = $request->alias;
+        $news->reviewer_id = auth()->id();
         $news->video = $request->video;
+
+        // Генерация алиаса, если не указан
+        if ($request->alias) {
+            $news->alias = $request->alias;
+        } else {
+            // Используем английский заголовок или любой доступный
+            $aliasSource = $request->input('en_title') ?? $request->input('ru_title') ?? $request->input('pl_title');
+            $news->alias = Str::slug($aliasSource);
+        }
+
+        // Проверяем уникальность алиаса, исключая текущую новость
+        $existingAlias = News::where('alias', $news->alias)->where('id', '!=', $news->id)->exists();
+        if ($existingAlias) {
+            $news->alias .= '-' . time();
+        }
 
         // Обработка изображения, если оно было загружено
         if ($request->hasFile('image')) {
-            // Удаление старого изображения
-            Storage::delete('public/news_images/' . $news->image);
-            $imageExtension = $request->image->extension();
+            // Удаление старого изображения, если оно существует
+            if ($news->image) {
+                Storage::delete('public/news_images/' . $news->image);
+            }
 
+            $imageExtension = $request->image->extension();
             $imageName = time() . '_' . $news->id . '_' . auth()->id() . '_' . $news->alias . '.' . $imageExtension;
             $imagePath = $request->image->storeAs('news_images', $imageName, 'public');
             $news->image = $imagePath;
@@ -220,7 +247,6 @@ class NewsController extends Controller
         $news->save();
 
         // Обновление или создание переводов
-        $languages = ['en', 'ru', 'pl'];
         foreach ($languages as $lang) {
             if ($request->input("{$lang}_title") && $request->input("{$lang}_content")) {
                 $dirtyHtml = trim($request->input("{$lang}_content"));
@@ -228,13 +254,18 @@ class NewsController extends Controller
                 $cleanHtml = strip_tags($dirtyHtml, $allowedTags);
                 $cleanHtml = $this->sanitizeImageTags($cleanHtml);
                 $cleanHtml = str_replace("'", "&apos;", $cleanHtml);
+
+                // Генерация ключевых слов и SEO-описания, если не указаны
+                $keywords = $request->input("{$lang}_keywords") ?? $this->keywordGenerator->generate($cleanHtml, $lang);
+                $seoDescription = $request->input("{$lang}_seo_description") ?? Str::limit(strip_tags($cleanHtml), 160, '...');
+
                 $translation = $news->translations()->updateOrCreate(
                     ['locale' => $lang],
                     [
                         'title' => $request->input("{$lang}_title"),
                         'content' => $cleanHtml,
-                        'keywords' => $request->input("{$lang}_keywords") ?? null,
-                        'seo_description' => $request->input("{$lang}_seo_description") ?? null
+                        'keywords' => $keywords,
+                        'seo_description' => $seoDescription
                     ]
                 );
             }
