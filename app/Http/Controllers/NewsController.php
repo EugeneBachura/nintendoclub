@@ -132,7 +132,10 @@ class NewsController extends Controller
 
                 // Генерация ключевых слов и SEO-описания, если не указаны
                 $keywords = $request->input("{$lang}_keywords") ?? $this->keywordGenerator->generate($cleanHtml, $lang);
-                $seoDescription = $request->input("{$lang}_seo_description") ?? Str::limit(strip_tags($cleanHtml), 160, '...');
+
+                // Декодирование HTML-сущностей перед генерацией SEO-описания
+                $decodedContent = html_entity_decode($cleanHtml, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $seoDescription = $request->input("{$lang}_seo_description") ?? Str::limit(strip_tags($decodedContent), 160, '...');
 
                 $translation = $news->translations()->updateOrCreate(
                     ['locale' => $lang],
@@ -257,7 +260,10 @@ class NewsController extends Controller
 
                 // Генерация ключевых слов и SEO-описания, если не указаны
                 $keywords = $request->input("{$lang}_keywords") ?? $this->keywordGenerator->generate($cleanHtml, $lang);
-                $seoDescription = $request->input("{$lang}_seo_description") ?? Str::limit(strip_tags($cleanHtml), 160, '...');
+
+                // Декодирование HTML-сущностей перед генерацией SEO-описания
+                $decodedContent = html_entity_decode($cleanHtml, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $seoDescription = $request->input("{$lang}_seo_description") ?? Str::limit(strip_tags($decodedContent), 160, '...');
 
                 $translation = $news->translations()->updateOrCreate(
                     ['locale' => $lang],
