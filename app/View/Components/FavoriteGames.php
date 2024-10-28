@@ -8,11 +8,13 @@ use Illuminate\View\Component;
 class FavoriteGames extends Component
 {
     public $favoriteGames;
+    public $limit;
 
-    public function __construct($userId)
+    public function __construct($userId, $limit = 5)
     {
         $profile = Profile::with('games')->where('user_id', $userId)->first();
         $this->favoriteGames = $profile ? $profile->games : collect();
+        $this->limit = $limit;
     }
 
     public function render()
