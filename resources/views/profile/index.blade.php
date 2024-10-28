@@ -3,14 +3,14 @@
     <x-slot name="header">
         <div class="flex justify-between">
             <div class="flex items-start content-center">
-                <x-avatar src="{{ $avatar }}" size="w-16 h-16" class="sm:flex sm:items-center sm:mr-6 mr-3"/>
+                <x-avatar src="{{ $avatar }}" size="w-16 h-16" class="sm:flex sm:items-center sm:mr-6 mr-3" />
                 <div class="py-2">
                     <h2 class="font-semibold text-xl text-color_text leading-tight"
-                    style="color:{{$design->nickname_color ?? '#ffffff'}}">
-                        {{$nickname}}
+                        style="color:{{ $design->nickname_color ?? '#ffffff' }}">
+                        {{ $nickname }}
                     </h2>
                     <div class="text-sm opacity-50">
-                        {{'@'.$name}}
+                        {{ '@' . $name }}
                     </div>
                 </div>
             </div>
@@ -21,19 +21,19 @@
     </x-slot>
 
     <div class="text-color_text space-y-5">
-        <x-level-bar currentExp={{$experience}} requiredExp={{$experienceToNextLevel}}>
-            {{$level}} {{__('profiles.level')}}
+        <x-level-bar :currentExp="$experience" :requiredExp="$experienceToNextLevel">
+            {{ $level }} {{ __('profiles.level') }}
         </x-level-bar>
         <div class="space-y-5 flex flex-col items-center sm:items-start">
             <div class="flex flex-row">
                 <div class="flex flex-row space-x-5">
-                    <x-icon-with-text icon="coins" tooltip="{{__('profiles.coins')}}">
-                        {{$coins}}
+                    <x-icon-with-text icon="coins" tooltip="{{ __('profiles.coins') }}">
+                        {{ $coins }}
                     </x-icon-with-text>
-                    <x-icon-with-text icon="diamond" tooltip="{{__('profiles.premium_points')}}">
-                        {{$premium_points}}
+                    <x-icon-with-text icon="diamond" tooltip="{{ __('profiles.premium_points') }}">
+                        {{ $premium_points }}
                     </x-icon-with-text>
-                    <x-icon-with-text icon="star" tooltip="{{__('profiles.stars')}}">
+                    <x-icon-with-text icon="star" tooltip="{{ __('profiles.stars') }}">
                         0
                     </x-icon-with-text>
                     {{-- <x-icon-with-text icon="pokeball" tooltip="{{__('profiles.pokeballs')}}">
@@ -45,29 +45,35 @@
                 </div>
             </div>
             <div class="flex flex-wrap flex-col sm:w-full space-y-5 md:flex-row md:space-x-5 md:space-y-0">
+                {{-- <div class="flex-1">
+                    <x-pokemon-component :pokemons="$pokemons" :limit="5" />
+                </div> --}}
                 <div class="flex-1">
-                    <x-pokemon-component :pokemons="$pokemons"/>
+                    <x-favorite-games :user-id="$id" :limit="5" />
                 </div>
                 <div class="flex-1">
-                    <x-favorite-games :user-id="$id"/>
+                    <x-badge-component :badges="$badges" :limit="6" />
                 </div>
-            </div>
-            <div class="flex flex-col justify-center">
-                <x-badge-component :badges="$badges" />
             </div>
             <div class="flex items-start content-center max-w-[420px] text-sm opacity-50">
-                {{$profile_description}}
+                {{ $profile_description }}
             </div>
         </div>
         @if (Auth::user()->id == $id)
             <div class="flex justify-center sm:justify-end">
-                @if (app()->getLocale() == "en")
-                    <x-button-link class="bg-grey text-grey-text hover:bg-grey-hover px-2 py-1 mb-4 sm:mb-0 flex items-center flex-row-reverse" href="{{route('profile.edit')}}">
-                        <x-icon-with-text icon="write" text_size="base" style="padding: 0">{{__('titles.profile_edit')}}</x-icon-with-text>
+                @if (app()->getLocale() == 'en')
+                    <x-button-link
+                        class="bg-grey text-grey-text hover:bg-grey-hover px-2 py-1 mb-4 sm:mb-0 flex items-center flex-row-reverse"
+                        href="{{ route('profile.edit') }}">
+                        <x-icon-with-text icon="write" text_size="base"
+                            style="padding: 0">{{ __('titles.profile_edit') }}</x-icon-with-text>
                     </x-button-link>
                 @else
-                    <x-button-link class="bg-grey text-grey-text hover:bg-grey-hover px-2 py-1 mb-4 sm:mb-0 flex items-center flex-row-reverse" href="{{localizedRoute('profile.edit')}}">
-                        <x-icon-with-text icon="write" text_size="base" style="padding: 0">{{__('titles.profile_edit')}}</x-icon-with-text>
+                    <x-button-link
+                        class="bg-grey text-grey-text hover:bg-grey-hover px-2 py-1 mb-4 sm:mb-0 flex items-center flex-row-reverse"
+                        href="{{ localizedRoute('profile.edit') }}">
+                        <x-icon-with-text icon="write" text_size="base"
+                            style="padding: 0">{{ __('titles.profile_edit') }}</x-icon-with-text>
                     </x-button-link>
                 @endif
             </div>
