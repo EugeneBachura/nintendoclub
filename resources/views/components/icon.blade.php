@@ -138,7 +138,38 @@
         </svg>
     @break
 
-    @case('diamond' || 'premium_points')
+    @case('diamond')
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="0 0 512.001 512.001" xml:space="preserve" fill="#000000">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+                <path style="fill:#00C3FF;"
+                    d="M507.827,137.848l-75.331-90.397c-3.422-4.106-8.491-6.48-13.836-6.48H93.342 c-5.346,0-10.413,2.374-13.836,6.48L4.174,137.848c-5.436,6.523-5.577,15.957-0.339,22.64L241.826,464.13 c7.211,9.2,21.139,9.2,28.35,0l237.991-303.643C513.403,153.804,513.262,144.371,507.827,137.848z">
+                </path>
+                <polygon style="fill:#40D2FF;" points="256.001,40.971 165.951,149.031 346.051,149.031 "></polygon>
+                <path style="fill:#00AAF0;"
+                    d="M165.951,149.031L86.083,42.541c-2.51,1.108-4.778,2.751-6.577,4.91L4.174,137.848 c-2.7,3.241-4.08,7.199-4.158,11.183H165.951z">
+                </path>
+                <path style="fill:#80E1FF;"
+                    d="M346.051,149.031l79.867-106.49c2.51,1.108,4.778,2.751,6.577,4.91l75.331,90.397 c2.7,3.241,4.08,7.199,4.158,11.183H346.051z">
+                </path>
+                <g>
+                    <path style="fill:#00C3FF;"
+                        d="M511.985,149.031H0.016c-0.078,4.034,1.183,8.093,3.819,11.457L241.826,464.13 c7.211,9.2,21.139,9.2,28.35,0l237.991-303.643C510.802,157.124,512.061,153.065,511.985,149.031z">
+                    </path>
+                    <path style="fill:#00C3FF;"
+                        d="M256.001,471.03c5.285,0,10.57-2.3,14.175-6.9l237.991-303.643 c2.636-3.363,3.896-7.422,3.819-11.457H256.001V471.03z">
+                    </path>
+                </g>
+                <path style="fill:#00AAF0;"
+                    d="M259.116,470.689c5.807-21.485,86.934-321.658,86.934-321.658h-180.1l86.934,321.658 C254.95,471.049,257.051,471.049,259.116,470.689z">
+                </path>
+            </g>
+        </svg>
+    @break
+
+    @case('premium_points')
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
             viewBox="0 0 512.001 512.001" xml:space="preserve" fill="#000000">
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
