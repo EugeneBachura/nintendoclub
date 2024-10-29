@@ -103,6 +103,24 @@ class User extends Authenticatable
             $colors[] = '#8000FF';
         }
 
+        if ($this->items->contains(function ($userItem) {
+            return $userItem->item->name == 'Orange Paint';
+        })) {
+            $colors[] = '#FF8000';
+        }
+
+        if ($this->items->contains(function ($userItem) {
+            return $userItem->item->name == 'Green Paint';
+        })) {
+            $colors[] = '#00FF00';
+        }
+
+        if ($this->items->contains(function ($userItem) {
+            return $userItem->item->name == 'Blue Paint';
+        })) {
+            $colors[] = '#2196F3';
+        }
+
         return $colors;
     }
 }
