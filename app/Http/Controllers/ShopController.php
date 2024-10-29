@@ -37,9 +37,18 @@ class ShopController extends Controller
             }
 
             $user->profile->coins -= $shopItem->price;
-        } else {
-            // Обработка других видов валют
-        }
+        };
+
+        // Оплата премиум пунктами
+        if ($shopItem->currency == 'premium_points') {
+            $currentPoints = $user->profile->premium_points; // Предполагаем, что у пользователя есть профиль с премиум пунктами
+
+            if ($currentPoints < $shopItem->price) {
+                return redirect()->back()->withErrors(__('messages.insufficient'));
+            }
+
+            $user->profile->premium_points -= $shopItem->price;
+        };
 
         if ($userItem) {
             // Увеличиваем количество, если не превышает max_quantity или max_quantity равно null
