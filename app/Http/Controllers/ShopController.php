@@ -76,6 +76,9 @@ class ShopController extends Controller
         $transaction->item_id = $item->id;
         $transaction->quantity = 1;
         $transaction->price = $shopItem->price;
+        if ($shopItem->currency == 'premium_points') {
+            $transaction->currency = 'premium_points'; // 'coins' is default
+        }
         $transaction->save();
 
         return redirect()->back()->with('success', __('messages.buy_success'));
