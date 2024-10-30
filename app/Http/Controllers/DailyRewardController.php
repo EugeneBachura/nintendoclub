@@ -29,35 +29,37 @@ class DailyRewardController extends Controller
         $rewards = [];
         switch ($profile->consecutive_days) {
             case 1:
-                $profile->coins += 3;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 3, 'item' => __('profiles.coins'));
+                $profile->coins += 1;
+                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 2, 'item' => __('profiles.coins'));
                 break;
             case 2:
                 // добавить предмет "Megaball" в инвентарь пользователя
-                $this->addItemToInventory($user, 'Megaball', 2);
-                $rewards[] = (object) array('icon' => 'megaball', 'quantity' => 2, 'item' => __('profiles.megaball'));
+                // $this->addItemToInventory($user, 'Megaball', 2);
+                //$rewards[] = (object) array('icon' => 'megaball', 'quantity' => 2, 'item' => __('profiles.megaball'));
+                $profile->coins += 2;
+                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 3, 'item' => __('profiles.coins'));
                 break;
             case 3:
+                $profile->coins += 3;
+                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 3, 'item' => __('profiles.coins'));
+                break;
+            case 4:
+                $profile->coins += 4;
+                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 4, 'item' => __('profiles.coins'));
+                break;
+            case 5:
                 $profile->coins += 5;
                 $rewards[] = (object) array('icon' => 'coins', 'quantity' => 5, 'item' => __('profiles.coins'));
                 break;
-            case 4:
-                $this->addItemToInventory($user, 'Megaball', 3);
-                $rewards[] = (object) array('icon' => 'megaball', 'quantity' => 3, 'item' => __('profiles.megaball'));
-                break;
-            case 5:
-                $profile->coins += 8;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 8, 'item' => __('profiles.coins'));
-                break;
             case 6:
-                $this->addItemToInventory($user, 'Megaball', 4);
-                $rewards[] = (object) array('icon' => 'megaball', 'quantity' => 4, 'item' => __('profiles.megaball'));
+                $profile->coins += 6;
+                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 5, 'item' => __('profiles.coins'));
                 break;
             case 7:
-                $profile->coins += 8;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 8, 'item' => __('profiles.coins'));
-                $this->addItemToInventory($user, 'Ultraball', 1);
-                $rewards[] = (object) array('icon' => 'ultraball', 'quantity' => 3, 'item' => __('profiles.ultraball'));
+                $profile->premium_points += 1;
+                $rewards[] = (object) array('icon' => 'premium_points', 'quantity' => 1, 'item' => __('profiles.premium_points'));
+                //$this->addItemToInventory($user, 'Ultraball', 1);
+                //$rewards[] = (object) array('icon' => 'ultraball', 'quantity' => 3, 'item' => __('profiles.ultraball'));
                 break;
         }
 
@@ -66,7 +68,6 @@ class DailyRewardController extends Controller
         $profile->consecutive_days = $profile->consecutive_days % 7;
         $profile->save();
 
-        //return redirect()->back()->with('success', __('messages.award_collected'));
         return redirect()->back()->with('rewards', $rewards);
     }
 
