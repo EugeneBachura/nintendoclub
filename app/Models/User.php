@@ -123,4 +123,9 @@ class User extends Authenticatable
 
         return $colors;
     }
+
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges');
+    }
 }
