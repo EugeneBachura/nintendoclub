@@ -10,5 +10,12 @@ return [
     'award_collected_today' => 'Награда уже была собрана сегодня.',
     'award_collected' => 'Награда успешно собрана.',
     'no_users_found' => 'Пользователи не найдены.',
-    'review_awards' => 'Получена награда за рецензию'
+    'review_awards' => 'Получена награда за рецензию',
+    'level_up_title' => "Поздравляем! Вы достигли уровня :level и получили следующие награды:",
+    'reward_coins' => "- Монеты: :quantity",
+    'reward_premium_points' => "- Премиум очки: :quantity",
+    'reward_item' => "- Предмет: :name",
+    'reward_badge' => "- Значок: :name",
+    'unknown_item' => "Неизвестный предмет",
+    'unknown_badge' => "Неизвестный значок",
 ];
