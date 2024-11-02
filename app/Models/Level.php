@@ -8,5 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Level extends Model
 {
     use HasFactory;
-    protected $fillable = ['level', 'experience_required', 'message', 'description'];
+    protected $fillable = ['level', 'experience_required', 'message', 'description', 'coins', 'premium_points', 'item_id', 'badge_id'];
+
+    public function item()
+    {
+        return $this->belongsTo(Item::class);
+    }
+
+    public function badge()
+    {
+        return $this->belongsTo(Badge::class);
+    }
 }
