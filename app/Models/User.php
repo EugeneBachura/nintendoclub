@@ -128,4 +128,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Badge::class, 'user_badges');
     }
+
+    public function nickname()
+    {
+        return $this->nickname;
+    }
+
+    public function preferredLocale()
+    {
+        return $this->locale ?? app()->getLocale();
+    }
 }
