@@ -28,9 +28,11 @@ class ProfileController extends Controller
         if (is_null($profile)) {
             return view('errors.no-profile');
         }
-        $experienceToNextLevel = $profile->experienceToNextLevel($profile->level);
 
-        // Получаем нужные данные из профиля
+        // Получаем опыт, необходимый для следующего уровня
+        $experienceToNextLevel = $profile->experienceToNextLevel();
+
+        // Формируем данные для передачи в представление
         $data = [
             'name' => $user->name,
             'nickname' => $user->nickname,
