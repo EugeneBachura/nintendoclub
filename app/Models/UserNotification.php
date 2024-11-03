@@ -30,6 +30,7 @@ class UserNotification extends Notification
         ];
     }
 
+    // Опционально: метод для установки локали
     public function locale($locale)
     {
         $this->locale = $locale;
