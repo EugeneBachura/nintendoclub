@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use App\Notifications\UserNotification;
+
 
 class Profile extends Model
 {
@@ -199,9 +201,9 @@ class Profile extends Model
     private function sendRewardNotification($rewardsGiven)
     {
         $user = $this->user;
-        $locale = $user->preferredLocale(); // Ensure this method returns the user's preferred locale
+        $locale = $user->preferredLocale(); // Получаем локаль пользователя
 
-        // Build the message using localization
+        // Составляем сообщение с учётом локали
         $message = __('messages.level_up_title', ['level' => $this->level], $locale) . "\n";
 
         foreach ($rewardsGiven as $reward) {
@@ -228,7 +230,7 @@ class Profile extends Model
         // URL to the inventory or profile
         $url = route('inventory.index');
 
-        // Send notification with localization
+        // Отправляем уведомление
         $user->notify((new UserNotification($message, $url))->locale($locale));
     }
 }
