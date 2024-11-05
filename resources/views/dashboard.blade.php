@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="slim"></x-slot>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-color_text leading-tight">
             {{ __('titles.dashboard') }}
@@ -13,10 +14,6 @@
     </div>
 
     <div class="text-xs opacity-50 flex justify-end w-full pt-2 -mb-4">
-        @if (app()->getLocale() == 'en')
-            <a href="{{ route('updates') }}">Test Ver. 0.3.2</a>
-        @else
-            <a href="@localizedRoute('updates.locale')">Test Ver. 0.3.2</a>
-        @endif
+        <a href="{{ route('updates') }}">Test Ver. 0.3.2</a>
     </div>
 </x-app-layout>
