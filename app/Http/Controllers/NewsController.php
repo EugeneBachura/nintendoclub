@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use Illuminate\Support\Facades\App;
 
 class NewsController extends Controller
 {
@@ -34,8 +35,44 @@ class NewsController extends Controller
 
     public function showAll()
     {
-        $newsList = News::orderBy('created_at', 'desc')->where('status', 'active')->paginate(18);
-        return view('news.showAll', compact('newsList'));
+        // Получаем список новостей с сортировкой и пагинацией
+        $newsList = News::where('status', 'active')->orderBy('created_at', 'desc')->paginate(18);
+
+        // Вычисляем цвет популярности и сокращенный контент для каждой новости
+        foreach ($newsList as $news) {
+            $news->popularityColor = $this->getPopularityColor($news->popularity + 400);
+            $news->trimmedContent = $this->getTrimmedContent($news->getTranslation('content', app()->getLocale()), app()->getLocale());
+        }
+
+        // Формируем хлебные крошки
+        $breadcrumbs = [
+            ['title' => __('titles.all_news'), 'url' => '']
+        ];
+
+        return view('news.showAll', compact('newsList', 'breadcrumbs'));
+    }
+
+    /**
+     * Сокращает контент в зависимости от выбранного языка и лимита символов.
+     *
+     * @param string $content
+     * @param string $locale
+     * @return string
+     */
+    private function getTrimmedContent($content, $locale)
+    {
+        $limit = match ($locale) {
+            'en' => 100,
+            'ru' => 300,
+            'pl' => 110,
+            default => 100,
+        };
+
+        // Сокращаем текст с добавлением "..."
+        $ending = '...';
+        return mb_strlen($content) > $limit
+            ? mb_substr($content, 0, mb_strripos(mb_substr($content, 0, $limit), ' ')) . $ending
+            : $content;
     }
 
     public function create()
@@ -280,30 +317,26 @@ class NewsController extends Controller
         return redirect()->route('news.index')->with('success', 'News updated successfully.');
     }
 
-    public function show(Request $request, $locale = null, $alias)
+    public function show(Request $request, $alias)
     {
-        // Установка локализации приложения
-        $locale = $locale ?? 'en';
-        app()->setLocale($locale);
+        // Получаем текущую локаль приложения
+        $locale = App::getLocale();
 
-        // Получение новости по алиасу
+        // Получаем новость по алиасу
         $news = News::where('alias', $alias)->where('status', 'active')->firstOrFail();
 
-        // Загрузка перевода для заданной локализации
+        // Проверяем наличие перевода для текущей локали
         $translation = $news->translations()->where('locale', $locale)->first();
 
-        // Проверка наличия заголовка и контента для данной локализации
         if (!$translation || !$translation->title || !$translation->content) {
-            // Если перевода нет, или нет заголовка/контента, вы можете перенаправить пользователя
-            // на английскую версию новости или показать 404 страницу
-            // if ($locale !== 'en') {
-            //     return redirect()->route('news.show', ['locale' => 'en', 'news' => $newsId]);
-            // }
+            // Если перевода нет, возвращаем 404
             abort(404);
         }
 
+        // Логика для увеличения просмотров и начисления наград
         $user = auth()->user();
         $rewards = [];
+
         if ($user) {
             $view = $news->views()->firstOrCreate([
                 'user_id' => $user->id
@@ -311,10 +344,9 @@ class NewsController extends Controller
 
             // Если это первый просмотр, увеличиваем популярность и начисляем монету
             if ($view->wasRecentlyCreated) {
-                $news->popularity += 10;
-                $news->update();
+                $news->increment('popularity', 10);
                 $user->profile()->increment('coins');
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 1, 'item' => 'coins');
+                $rewards[] = (object) ['icon' => 'coins', 'quantity' => 1, 'item' => 'coins'];
             }
         }
 
@@ -328,53 +360,56 @@ class NewsController extends Controller
 
         session()->flash('rewards', $rewards);
 
-        // Если все проверки пройдены, показываем новость
-        return view('news.show', compact('news', 'seo_description', 'seo_keywords'));
+        // Вычисляем цвет популярности
+        $popularityColor = $this->getPopularityColor($news->popularity + 400);
+
+        // Формируем хлебные крошки
+        $breadcrumb_title = $translation->title;
+        $breadcrumbs = [
+            ['title' => __('titles.all_news'), 'url' => localized_url('news.showAll')],
+            ['title' => $this->trimTitle($breadcrumb_title), 'url' => ''],
+        ];
+
+        return view('news.show', compact('news', 'seo_description', 'seo_keywords', 'popularityColor', 'breadcrumbs'));
     }
 
-    public function showWithoutLocale(Request $request, $alias)
+    /**
+     * Вычисляет цвет популярности на основе значения популярности.
+     *
+     * @param int $popularity
+     * @return string
+     */
+    private function getPopularityColor($popularity)
     {
-        // Установка локализации приложения
-        $locale = 'en';
-        app()->setLocale($locale);
-
-        // Получение новости по алиасу
-        $news = News::where('alias', $alias)->where('status', 'active')->firstOrFail();
-
-        // Загрузка перевода для заданной локализации
-        $translation = $news->translations()->where('locale', $locale)->first();
-
-        // Проверка наличия заголовка и контента для данной локализации
-        if (!$translation || !$translation->title || !$translation->content) {
-            abort(404);
-        }
-
-        $user = auth()->user();
-        $rewards = [];
-        if ($user) {
-            $view = $news->views()->firstOrCreate([
-                'user_id' => $user->id
-            ]);
-
-            // Если это первый просмотр, увеличиваем популярность и начисляем монету
-            if ($view->wasRecentlyCreated) {
-                $news->popularity += 10;
-                $news->update();
-                $user->profile()->increment('coins');
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 1, 'item' => 'coins');
-            }
-        }
-
-        $news->increment('views_count');
-
-        $seo_description = $translation->seo_description;
-        $seo_keywords = $translation->keywords;
-
-        session()->flash('rewards', $rewards);
-
-        // Если все проверки пройдены, показываем новость
-        return view('news.show', compact('news', 'seo_description', 'seo_keywords'));
+        $maxPopularity = 1000;
+        $intensity = $popularity / $maxPopularity;
+        $red = 255;
+        $green = 255 * (1 - $intensity);
+        $blue = 0;
+        return "rgb($red, $green, $blue)";
     }
+
+    /**
+     * Обрезает заголовок для хлебных крошек.
+     *
+     * @param string $title
+     * @return string
+     */
+    private function trimTitle($title)
+    {
+        $limit = 50;
+        $ending = '...';
+
+        if (mb_strlen($title) > $limit) {
+            $cutOff = mb_strripos(mb_substr($title, 0, $limit), ' ');
+            $trimmed = mb_substr($title, 0, $cutOff) . $ending;
+        } else {
+            $trimmed = $title;
+        }
+
+        return $trimmed;
+    }
+
 
     public function destroy(News $news)
     {
