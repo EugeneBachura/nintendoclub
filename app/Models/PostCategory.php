@@ -9,13 +9,16 @@ class PostCategory extends Model
 {
     use HasFactory;
 
+    protected $appends = ['name'];
+
     public function posts()
     {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(Post::class, 'category_id');
     }
 
-    public function name()
+    public function getNameAttribute()
     {
-        return $this->hasMany(Post::class);
+        $locale = app()->getLocale();
+        return $this->attributes["name_{$locale}"] ?? $this->attributes['name_en'];
     }
 }
