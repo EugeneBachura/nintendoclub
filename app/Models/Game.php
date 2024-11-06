@@ -23,7 +23,7 @@ class Game extends Model
     public function getTranslation($field, $locale = null)
     {
         $locale = $locale ?? app()->getLocale();
-        $translation = $this->translations->where('locale', $locale)->first();
-        return $translation ? $translation->{$field} : null;
+        $translation = $this->translations()->where('locale', $locale)->first();
+        return $translation ? $translation->{$field} : $this->{$field};
     }
 }

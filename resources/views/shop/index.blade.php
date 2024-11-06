@@ -58,13 +58,8 @@
             </div>
         </div>
         <div class="flex justify-end sm:mx-6 sm:px-6 lg:px-8">
-            @if (app()->getLocale() == 'en')
-                <x-button-link class="bg-grey text-grey-text hover:bg-grey-hover mb-4 mt-4 sm:mb-0 sm:mt-4"
-                    href="{{ route('transactions.history') }}">{{ __('titles.history_shop') }}</x-button-link>
-            @else
-                <x-button-link class="bg-grey text-grey-text hover:bg-grey-hover mb-4 mt-4 sm:mb-0 sm:mt-4"
-                    href="{{ localizedRoute('transactions.history') }}">{{ __('titles.history_shop') }}</x-button-link>
-            @endif
+            <x-button-link class="bg-grey text-grey-text hover:bg-grey-hover mb-4 mt-4 sm:mb-0 sm:mt-4"
+                href="{{ route('transactions.history') }}">{{ __('titles.history_shop') }}</x-button-link>
         </div>
     </div>
 </x-app-layout>

@@ -61,22 +61,22 @@
         </div>
         @if (Auth::user()->id == $id)
             <div class="flex justify-center sm:justify-end">
-                @if (app()->getLocale() == 'en')
-                    <x-button-link
-                        class="bg-grey text-grey-text hover:bg-grey-hover px-2 py-1 mb-4 sm:mb-0 flex items-center flex-row-reverse"
-                        href="{{ route('profile.edit') }}">
-                        <x-icon-with-text icon="write" text_size="base"
-                            style="padding: 0">{{ __('titles.profile_edit') }}</x-icon-with-text>
-                    </x-button-link>
-                @else
-                    <x-button-link
-                        class="bg-grey text-grey-text hover:bg-grey-hover px-2 py-1 mb-4 sm:mb-0 flex items-center flex-row-reverse"
-                        href="{{ localizedRoute('profile.edit') }}">
-                        <x-icon-with-text icon="write" text_size="base"
-                            style="padding: 0">{{ __('titles.profile_edit') }}</x-icon-with-text>
-                    </x-button-link>
-                @endif
+                <x-button-link
+                    class="bg-grey text-grey-text hover:bg-grey-hover px-2 py-1 mb-4 sm:mb-0 flex items-center flex-row-reverse"
+                    href="{{ route('profile.edit') }}">
+                    <x-icon-with-text icon="write" text_size="base"
+                        style="padding: 0">{{ __('titles.profile_edit') }}</x-icon-with-text>
+                </x-button-link>
             </div>
         @endif
     </div>
+    @if (auth()->check() && auth()->id() === 1)
+        <form action="{{ url('/admin/add-exp') }}" method="GET">
+            @csrf
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Add Experience
+            </button>
+        </form>
+    @endif
+
 </x-app-layout>
