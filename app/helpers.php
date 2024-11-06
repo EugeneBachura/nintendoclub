@@ -1,14 +1,12 @@
 <?php
 
-if (!function_exists('localizedRoute')) {
-    function localizedRoute($route, $parameters = [])
-    {
-        $locale = app()->getLocale();
-        $defaultLocale = 'en';
+use Illuminate\Support\Facades\App;
 
-        if ($locale == $defaultLocale) {
-            return route($route, $parameters);
-        }
-        return route($route . '.locale', array_merge(['locale' => $locale], $parameters));
+if (!function_exists('localized_url')) {
+    function localized_url($name, $parameters = [], $absolute = true)
+    {
+        $locale = App::getLocale();
+        $parameters['lang'] = $locale;
+        return route($name, $parameters, $absolute);
     }
 }

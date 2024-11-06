@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Services\KeywordGenerator;
+use Illuminate\Support\Facades\App;
 
 class PostController extends Controller
 {
@@ -27,11 +28,48 @@ class PostController extends Controller
 
     public function showAll()
     {
+        // Получаем список постов, отфильтрованных по языку, статусу и загружаем связанные категории
         $posts = Post::where('language', app()->getLocale())
             ->where('status', 'active')
-            ->with(['category'])
+            ->with('category')
             ->paginate(18);
-        return view('posts.showAll', compact('posts'));
+
+        // Добавляем сокращенный контент для постов
+        foreach ($posts as $post) {
+            $post->trimmedContent = $this->getTrimmedContent($post->content, app()->getLocale());
+        }
+
+        // Формируем хлебные крошки
+        $breadcrumbs = [
+            ['title' => __('titles.all_posts'), 'url' => '']
+        ];
+
+        return view('posts.showAll', compact('posts', 'breadcrumbs'));
+    }
+
+    private function getTrimmedContent($content, $locale)
+    {
+        $limit = match ($locale) {
+            'en' => 100,
+            'ru' => 120,
+            'pl' => 110,
+            default => 100,
+        };
+
+        // Убираем HTML-теги из текста
+        $plainContent = strip_tags($content);
+
+        // Убираем специальные символы, такие как &nbsp; и другие
+        $plainContent = preg_replace('/&nbsp;|•|[^\p{L}\p{N}\s,.!?:;"\'-]+/u', ' ', $plainContent);
+
+        // Сокращаем текст с добавлением "..."
+        $ending = '...';
+        $trimmedContent = mb_strlen($plainContent) > $limit
+            ? mb_substr($plainContent, 0, mb_strripos(mb_substr($plainContent, 0, $limit), ' ')) . $ending
+            : $plainContent;
+
+        // Убираем лишние пробелы
+        return trim(preg_replace('/\s+/', ' ', $trimmedContent));
     }
 
     public function showUserPosts()
@@ -40,48 +78,78 @@ class PostController extends Controller
         return view('posts.index', compact('postsList'));
     }
 
-    public function show($alias)
+    public function show(Request $request, $alias)
     {
-        $post = Post::with(['comments' => function ($query) {
-            $query->where('status', 'approved')->whereNull('parent_id') // Загружаем только комментарии верхнего уровня
-                ->with('user') // Загружаем данные пользователя, который оставил комментарий
-                ->with(['replies' => function ($query) {
-                    $query->with('user'); // Загружаем данные пользователя для ответов на комментарии
-                }])
-                ->orderBy('created_at', 'desc'); // Сортировка комментариев по дате создания
-        }])->where('alias', $alias)->where('language', 'en')->firstOrFail();
+        // Получаем текущую локаль приложения
+        $locale = App::getLocale();
+
+        // Загружаем пост с комментариями и связями
+        $post = Post::with([
+            'comments' => function ($query) {
+                $query->where('status', 'approved')
+                    ->whereNull('parent_id') // Только комментарии верхнего уровня
+                    ->with('user') // Пользователь, оставивший комментарий
+                    ->with(['replies' => function ($query) {
+                        $query->with('user'); // Пользователь, оставивший ответ
+                    }])
+                    ->orderBy('created_at', 'desc'); // Сортировка по дате создания
+            },
+            'likes', // Загружаем лайки для поста
+        ])
+            ->where('alias', $alias)
+            ->where('language', $locale)
+            ->firstOrFail();
+
+        // Увеличиваем количество просмотров
         $post->increment('views_count');
 
+        // Получаем уровень пользователя
         $user = auth()->user();
-        if ($user) {
-            $user_level = $user->profile->level;
-        } else {
-            $user_level = 0;
-        }
+        $user_level = $user ? $user->profile->level : 0;
 
-        return view('posts.show', compact('post', 'user_level'));
+        // Обрезаем заголовок для хлебных крошек
+        $trimmedTitle = $this->trimTitle($post->title, $locale);
+
+        // Формируем хлебные крошки
+        $breadcrumbs = [
+            ['title' => __('titles.all_posts'), 'url' => localized_url('post.showAll')],
+            ['title' => $trimmedTitle, 'url' => ''],
+        ];
+
+        // SEO данные
+        $seo_description = $post->seo_description ?? '';
+        $seo_keywords = $post->keywords ?? '';
+
+        // Передаём необходимые данные в представление
+        return view('posts.show', compact('post', 'user_level', 'breadcrumbs', 'seo_description', 'seo_keywords'));
     }
-    public function showWithLocale($locale, $alias)
-    {
-        $locale = app()->getLocale();
-        $post = Post::with(['comments' => function ($query) {
-            $query->where('status', 'approved')->whereNull('parent_id') // Загружаем только комментарии верхнего уровня
-                ->with('user') // Загружаем данные пользователя, который оставил комментарий
-                ->with(['replies' => function ($query) {
-                    $query->with('user'); // Загружаем данные пользователя для ответов на комментарии
-                }])
-                ->orderBy('created_at', 'desc'); // Сортировка комментариев по дате создания
-        }])->where('alias', $alias)->where('language', $locale)->firstOrFail();
-        $post->increment('views_count');
 
-        $user = auth()->user();
-        if ($user) {
-            $user_level = $user->profile->level;
+    /**
+     * Обрезает заголовок для хлебных крошек.
+     *
+     * @param string $title
+     * @param string $locale
+     * @return string
+     */
+    private function trimTitle($title, $locale)
+    {
+        $limit = match ($locale) {
+            'en' => 70,
+            'ru' => 60,
+            'pl' => 60,
+            default => 70,
+        };
+
+        $ending = '...';
+
+        if (mb_strlen($title) > $limit) {
+            $cutOff = mb_strripos(mb_substr($title, 0, $limit), ' ');
+            $trimmed = mb_substr($title, 0, $cutOff) . $ending;
         } else {
-            $user_level = 0;
+            $trimmed = $title;
         }
 
-        return view('posts.show', compact('post', 'user_level'));
+        return $trimmed;
     }
 
     public function create()

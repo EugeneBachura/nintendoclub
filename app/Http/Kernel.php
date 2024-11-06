@@ -36,8 +36,6 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
-            \App\Http\Middleware\LocaleMiddleware::class,
         ],
 
         'api' => [
@@ -74,6 +72,6 @@ class Kernel extends HttpKernel
 
     protected $routeMiddleware = [
         'token.valid' => \App\Http\Middleware\EnsureTokenIsValid::class,
-        'locale' => \App\Http\Middleware\LocaleMiddleware::class,
+        'setlocale' => \App\Http\Middleware\SetLocale::class,
     ];
 }
