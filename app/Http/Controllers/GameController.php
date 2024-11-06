@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,8 +19,46 @@ class GameController extends Controller
 
     public function showAll()
     {
+        // Получаем текущую локаль
+        $locale = App::getLocale();
+
+        // Загружаем игры с переводами и вычисляем необходимые данные
         $games = Game::paginate(20);
-        return view('games.showAll', compact('games'));
+
+        foreach ($games as $game) {
+            // Получаем название игры на текущем языке
+            $game->localizedName = $game->getTranslation('name', $locale) ?? $game->name;
+
+            // Вычисляем средний рейтинг
+            $game->average_score = $game->average_score ?? 4.9;
+
+            // Определяем цвет рейтинга
+            $game->score_color = $this->getScoreColor($game->average_score);
+        }
+
+        // Формируем хлебные крошки
+        $breadcrumbs = [
+            ['title' => __('Games'), 'url' => '']
+        ];
+
+        return view('games.showAll', compact('games', 'breadcrumbs'));
+    }
+
+    /**
+     * Определяет цвет рейтинга на основе среднего балла.
+     *
+     * @param float $averageScore
+     * @return string
+     */
+    private function getScoreColor($averageScore)
+    {
+        if ($averageScore > 4) {
+            return 'bg-success';
+        } elseif ($averageScore > 2) {
+            return 'bg-warn-hover';
+        } else {
+            return 'bg-accent';
+        }
     }
 
     public function create()
@@ -117,103 +156,61 @@ class GameController extends Controller
         // Валидация данных и обновление игры
     }
 
-    public function show($locale = null, $alias)
+    public function show($alias)
     {
-        // Установка локализации приложения
-        $locale = $locale ?? 'en';
-        app()->setLocale($locale);
+        $locale = App::getLocale();
 
-        // Получение новости по алиасу
+        // Получаем игру по алиасу
         $game = Game::where('alias', $alias)->firstOrFail();
 
-        // Загрузка перевода для заданной локализации
-        // $translation = $game->translations()->where('locale', $locale)->first();
+        // Локализованные данные игры
+        $game->localizedName = $game->getTranslation('name', $locale) ?? $game->name;
+        $game->localizedDescription = $game->getTranslation('description', $locale) ?? $game->description;
+        $game->localizedSeoDescription = $game->getTranslation('seo_description', $locale) ?? '';
+        $game->localizedSeoKeywords = $game->getTranslation('keywords', $locale) ?? '';
 
-        $game->seo_description = $game->getTranslation('seo_description', $locale);
-        $game->seo_keywords = $game->getTranslation('seo_keywords', $locale);
-        $game->description = $game->getTranslation('description', $locale);
-        $game->name = $game->getTranslation('name', $locale);
+        // Вычисляем цвет оценки
+        $game->average_score = $game->average_score ?? 4.9;
+        $game->score_color = $this->getScoreColor($game->average_score);
 
+        // Форматируем дату релиза
+        $releaseDate = date("d-m-Y", strtotime($game->release_date));
 
+        // Проверяем, есть ли несколько платформ
+        $isMultiplePlatforms = strpos($game->platform, ',') !== false;
+
+        // Получаем уровень пользователя
         $user = auth()->user();
+        $user_level = $user ? $user->profile->level : 0;
+
+        // Получаем отзыв пользователя об игре, если он есть
+        $review = null;
         if ($user) {
-            $review = Review::where('user_id', auth()->user()->id)
+            $review = Review::where('user_id', $user->id)
                 ->where('game_id', $game->id)
                 ->first();
-        } else $review = null;
-
-        // Получаем рецензии на языке пользователя
-        $localeReviews = Review::where('game_id', $game->id)->where('status', 'published')->where('language', $locale)->orderBy('created_at', 'desc')->limit(10)->get();
-        // Проверяем, нужно ли добавлять дополнительные рецензии
-        if ($localeReviews->count() < 10) {
-            $additionalReviews = Review::where('game_id', $game->id)
-                ->where('language', '<>', $locale)
-                ->orderBy('created_at', 'desc')
-                ->where('status', 'published')
-                ->limit(10 - $localeReviews->count())
-                ->get();
-            // Объединяем коллекции
-            $reviews = $localeReviews->concat($additionalReviews);
-        } else {
-            $reviews = $localeReviews;
         }
 
-        $averageRating = Review::where('game_id', $game->id)->where('status', 'published')->avg('rating');
-        $game->average_score = $averageRating;
-        $game->save();
+        // Получаем другие отзывы об игре
+        $reviews = Review::where('game_id', $game->id)
+            ->where('status', 'approved')
+            ->with('user.design') // Загружаем отношения пользователя и его дизайн
+            ->get();
 
-        if ($user) {
-            $user_level = $user->profile->level;
-        } else {
-            $user_level = 0;
-        }
+        // Формируем хлебные крошки
+        $breadcrumbs = [
+            ['title' => __('Games'), 'url' => localized_url('game.showAll')],
+            ['title' => $game->localizedName, 'url' => ''],
+        ];
 
-        return view('games.show', compact('game', 'review', 'reviews', 'user_level'));
-    }
-
-    public function showWithoutLocale($alias)
-    {
-        // Установка локализации приложения
-        $locale = 'en';
-        app()->setLocale($locale);
-
-        // Получение новости по алиасу
-        $game = Game::where('alias', $alias)->firstOrFail();
-
-        $user = auth()->user();
-        if ($user) {
-            $review = Review::where('user_id', auth()->user()->id)
-                ->where('game_id', $game->id)
-                ->first();
-        } else $review = null;
-
-
-        // Получаем рецензии на языке пользователя
-        $localeReviews = Review::where('game_id', $game->id)->where('status', 'published')->where('language', $locale)->orderBy('created_at', 'desc')->limit(10)->get();
-        // Проверяем, нужно ли добавлять дополнительные рецензии
-        if ($localeReviews->count() < 10) {
-            $additionalReviews = Review::where('game_id', $game->id)
-                ->where('language', '<>', $locale)
-                ->where('status', 'published')
-                ->orderBy('created_at', 'desc')
-                ->limit(10 - $localeReviews->count())
-                ->get();
-            // Объединяем коллекции
-            $reviews = $localeReviews->concat($additionalReviews);
-        } else {
-            $reviews = $localeReviews;
-        }
-
-        $averageRating = Review::where('game_id', $game->id)->where('status', 'published')->avg('rating');
-        $game->average_score = $averageRating;
-        $game->save();
-
-        if ($user) {
-            $user_level = $user->profile->level;
-        } else {
-            $user_level = 0;
-        }
-
-        return view('games.show', compact('game', 'review', 'reviews', 'user_level'));
+        return view('games.show', compact(
+            'game',
+            'releaseDate',
+            'isMultiplePlatforms',
+            'user_level',
+            'review',
+            'reviews',
+            'breadcrumbs'
+        ));
     }
 }
