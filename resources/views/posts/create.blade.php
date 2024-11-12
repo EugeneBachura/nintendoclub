@@ -26,7 +26,7 @@
                         'under_review' => 'Under Review',
                     ];
                 }
-                if (Auth::user()->hasRole('review_editor') || Auth::user()->hasRole('administrator')) {
+                if (Auth::user()->hasRole('administrator')) {
                     $statusOptions = [
                         'active' => 'Active',
                         'hidden' => 'Hidden',
@@ -68,7 +68,7 @@
                 accept=".jpg" />
         </div>
 
-        @role('review_editor|administrator')
+        @role('administrator')
             <div
                 class="pb-3 mb-3 space-y-1 relative after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-current after:opacity-10">
                 <x-input-text id="keywords" name="keywords" value="{{ old('keywords') }}" label="Keywords" maxlength=255
