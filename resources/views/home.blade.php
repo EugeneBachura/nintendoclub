@@ -42,18 +42,6 @@
         discord_iframe.src = "https://discord.com/widget?id=691192063731040256&theme=dark";
     </x-slot>
 
-    @php
-        function getPopularityColor($popularity)
-        {
-            $maxPopularity = 1000;
-            $intensity = $popularity / $maxPopularity;
-            $red = 255;
-            $green = 255 * (1 - $intensity);
-            $blue = 0;
-            return "rgb($red, $green, $blue)";
-        }
-    @endphp
-
     <div class="relative pb-6">
         <div class="flex justify-between items-start">
             <h2 class="flex font-semibold text-xl text-content_text leading-tight pb-3 px-0">
@@ -84,7 +72,7 @@
                                                 <div class="flex h-max align-middle items-center space-x-1 rounded-lg">
                                                     <div class="h-5 w-5 mt-0.5">
                                                         <x-icon name="burn"
-                                                            fill="{{ getPopularityColor($news->popularity + 400) }}"></x-icon>
+                                                            fill="{{ $news->getPopularityColor() }}"></x-icon>
                                                     </div>
                                                 </div>
                                                 <div
@@ -125,7 +113,7 @@
                                                 <div class="flex h-max align-middle items-center space-x-1 rounded-lg">
                                                     <div class="h-5 w-5 mt-0.5">
                                                         <x-icon name="burn"
-                                                            fill="{{ getPopularityColor($news->popularity + 400) }}"></x-icon>
+                                                            fill="{{ $news->getPopularityColor() }}"></x-icon>
                                                     </div>
                                                 </div>
                                                 <div
@@ -204,7 +192,7 @@
         </div>
         <div class="sm:w-2/3">
             <h2 class="flex font-semibold text-xl text-content_text leading-tight pb-4 px-0">
-                {{ __('titles.last_publications') }}</h2>
+                {{ __('titles.posts') }}</h2>
             <div class="bg-content-hover p-4 rounded-lg">
 
             </div>
