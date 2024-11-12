@@ -40,7 +40,7 @@ class NewsController extends Controller
 
         // Вычисляем цвет популярности и сокращенный контент для каждой новости
         foreach ($newsList as $news) {
-            $news->popularityColor = $this->getPopularityColor($news->popularity + 400);
+            $news->popularityColor = $news->getPopularityColor();
             $news->trimmedContent = $this->getTrimmedContent($news->getTranslation('content', app()->getLocale()), app()->getLocale());
         }
 
@@ -361,7 +361,7 @@ class NewsController extends Controller
         session()->flash('rewards', $rewards);
 
         // Вычисляем цвет популярности
-        $popularityColor = $this->getPopularityColor($news->popularity + 400);
+        $popularityColor = $news->getPopularityColor();
 
         // Формируем хлебные крошки
         $breadcrumb_title = $translation->title;
@@ -371,22 +371,6 @@ class NewsController extends Controller
         ];
 
         return view('news.show', compact('news', 'seo_description', 'seo_keywords', 'popularityColor', 'breadcrumbs'));
-    }
-
-    /**
-     * Вычисляет цвет популярности на основе значения популярности.
-     *
-     * @param int $popularity
-     * @return string
-     */
-    private function getPopularityColor($popularity)
-    {
-        $maxPopularity = 1000;
-        $intensity = $popularity / $maxPopularity;
-        $red = 255;
-        $green = 255 * (1 - $intensity);
-        $blue = 0;
-        return "rgb($red, $green, $blue)";
     }
 
     /**

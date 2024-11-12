@@ -39,4 +39,18 @@ class News extends Model
     {
         return $this->hasMany(NewsView::class);
     }
+
+    /* Вычисляет цвет на основе популярности новости
+        * @return string
+    */
+    public function getPopularityColor()
+    {
+        $maxPopularity = 1000;
+        $intensity = ($this->popularity / $maxPopularity) + 0.2;
+        $red = 255;
+        $green = 255 * (1 - $intensity);
+        $blue = 0;
+
+        return "rgb($red, $green, $blue)";
+    }
 }
