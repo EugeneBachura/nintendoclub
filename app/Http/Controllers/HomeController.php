@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Models\PostCategory;
 use App\Models\Profile;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -27,12 +28,23 @@ class HomeController extends Controller
         // Получаем топ 5 популярных новостей (предполагается наличие поля 'popularity')
         $topNews = News::orderBy('popularity', 'desc')->orderBy('created_at', 'desc')->where('status', 'active')->take(5)->get();
 
+        // Получаем категории с постами, отфильтрованными по языку и статусу
+        $categories = PostCategory::with(['posts' => function ($query) {
+            $query->where('status', 'active')
+                ->where('language', app()->getLocale()) // Фильтруем по текущей локали
+                ->latest()
+                ->take(2); // Ограничиваем до 2 постов
+        }])->get()->filter(function ($category) {
+            return $category->posts->isNotEmpty(); // Оставляем только категории с постами
+        });
+
         return view('home', [
             'latestNews' => $latestNews,
             'usersOnlineCount' => $usersOnlineCount,
             'usersOnline' => $usersOnline,
             'usersOnlineTodayCount' => $usersOnlineTodayCount,
-            'topNews' => $topNews
+            'topNews' => $topNews,
+            'categories' => $categories
         ]);
     }
 
