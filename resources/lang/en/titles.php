@@ -20,5 +20,6 @@ return [
     'all_posts' => 'All Posts',
     'news' => 'News',
     'posts' => 'Posts',
-    'games' => 'Games'
+    'games' => 'Games',
+    'users_posts' => 'Users Posts',
 ];
