@@ -42,18 +42,6 @@
         discord_iframe.src = "https://discord.com/widget?id=691192063731040256&theme=dark";
     </x-slot>
 
-    @php
-        function getPopularityColor($popularity)
-        {
-            $maxPopularity = 1000;
-            $intensity = $popularity / $maxPopularity;
-            $red = 255;
-            $green = 255 * (1 - $intensity);
-            $blue = 0;
-            return "rgb($red, $green, $blue)";
-        }
-    @endphp
-
     <div class="relative pb-6">
         <div class="flex justify-between items-start">
             <h2 class="flex font-semibold text-xl text-content_text leading-tight pb-3 px-0">
@@ -84,7 +72,7 @@
                                                 <div class="flex h-max align-middle items-center space-x-1 rounded-lg">
                                                     <div class="h-5 w-5 mt-0.5">
                                                         <x-icon name="burn"
-                                                            fill="{{ getPopularityColor($news->popularity + 400) }}"></x-icon>
+                                                            fill="{{ $news->getPopularityColor() }}"></x-icon>
                                                     </div>
                                                 </div>
                                                 <div
@@ -125,7 +113,7 @@
                                                 <div class="flex h-max align-middle items-center space-x-1 rounded-lg">
                                                     <div class="h-5 w-5 mt-0.5">
                                                         <x-icon name="burn"
-                                                            fill="{{ getPopularityColor($news->popularity + 400) }}"></x-icon>
+                                                            fill="{{ $news->getPopularityColor() }}"></x-icon>
                                                     </div>
                                                 </div>
                                                 <div
@@ -204,9 +192,63 @@
         </div>
         <div class="sm:w-2/3">
             <h2 class="flex font-semibold text-xl text-content_text leading-tight pb-4 px-0">
-                {{ __('titles.last_publications') }}</h2>
+                {{ __('titles.users_posts') }}</h2>
             <div class="bg-content-hover p-4 rounded-lg">
-
+                @foreach ($categories as $category)
+                    <div class="mb-8">
+                        <h3 class="text-lg font-bold text-content_text">{{ $category->{'name_' . app()->getLocale()} }}
+                        </h3>
+                        <div class="flex -mx-4">
+                            @foreach ($category->posts as $post)
+                                <div class="p-4 md:w-1/2">
+                                    <div
+                                        class="h-full border-opacity-50 shadow border border-content_text rounded-lg overflow-hidden">
+                                        @if ($post->image)
+                                            <img class="lg:h-48 md:h-36 w-full object-cover object-center"
+                                                src="{{ asset('storage/posts_images/' . $post->image) }}"
+                                                alt="post image">
+                                        @endif
+                                        <div class="px-6 pt-5 pb-3">
+                                            <h2 class="tracking-widest text-xs title-font font-medium opacity-50 mb-1">
+                                                {{ $category->{'name_' . app()->getLocale()} }}
+                                            </h2>
+                                            <h1 class="text-lg font-bold mb-3">{{ $post->title }}</h1>
+                                            <p class="text-sm">{{ $post->trimmedContent }}</p>
+                                            <div class="flex items-center justify-between flex-wrap">
+                                                <div class="flex space-x-3">
+                                                    @php $isLiked = $post->likes->contains('user_id', Auth::id()); @endphp
+                                                    <x-icon-with-text icon="like"
+                                                        fill="{{ $isLiked ? '#ff3b3c' : '#252525' }}"
+                                                        tooltip="{{ __('interfaces.likes') }}">
+                                                        {{ $post->likes->count() }}
+                                                    </x-icon-with-text>
+                                                    <x-icon-with-text icon="eye" fill="#252525"
+                                                        tooltip="{{ __('interfaces.views') }}">
+                                                        {{ $post->views_count }}
+                                                    </x-icon-with-text>
+                                                    <x-icon-with-text icon="comments" fill="#252525"
+                                                        tooltip="{{ __('interfaces.comments') }}">
+                                                        {{ $post->comments_count }}
+                                                    </x-icon-with-text>
+                                                </div>
+                                                <a href="{{ localized_url('post.show', ['alias' => $post->alias]) }}"
+                                                    class="text-accent transition hover:scale-105 hover:text-content_text hover:underline inline-flex items-center md:mb-2 lg:mb-0">
+                                                    {{ __('interfaces.learn_more') }}
+                                                    <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24"
+                                                        stroke="currentColor" stroke-width="2" fill="none"
+                                                        stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M5 12h14"></path>
+                                                        <path d="M12 5l7 7-7 7"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
