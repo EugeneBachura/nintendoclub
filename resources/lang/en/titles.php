@@ -22,4 +22,5 @@ return [
     'posts' => 'Posts',
     'games' => 'Games',
     'users_posts' => 'Users Posts',
+    'level_rewards' => 'Level Rewards',
 ];
