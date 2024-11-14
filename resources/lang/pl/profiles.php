@@ -19,5 +19,6 @@ return [
     'ultraball' => 'Ultraballe',
     'nickname_color' => 'Nickname Color',
     'nickname_color_description' => 'The color of the nickname on the server in Discord will also be changed within 10 minutes.',
-    'exp' => 'exp.'
+    'exp' => 'exp.',
+    'rewards' => 'Nagrody',
 ];
