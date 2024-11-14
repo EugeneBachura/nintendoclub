@@ -88,5 +88,25 @@
         .content h4 {
             font-size: 1.125rem;
         }
+
+        ol li {
+            list-style-type: decimal;
+            margin-left: 20px;
+        }
+
+        ul li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        blockquote {
+            overflow: hidden;
+            padding-right: 1.5em;
+            padding-left: 1.5em;
+            margin-left: 0;
+            margin-right: 0;
+            font-style: italic;
+            border-left: 5px solid #ccc;
+        }
     </style>
 </x-app-layout>
