@@ -19,4 +19,20 @@ class Level extends Model
     {
         return $this->belongsTo(Badge::class);
     }
+
+    public function getLocalizedMessage()
+    {
+        $locale = app()->getLocale();
+        $messages = json_decode($this->message, true);
+
+        return $messages[$locale] ?? $messages['en'] ?? '';
+    }
+
+    public function getLocalizedDescription()
+    {
+        $locale = app()->getLocale();
+        $descriptions = json_decode($this->description, true);
+
+        return $descriptions[$locale] ?? $descriptions['en'] ?? '';
+    }
 }
