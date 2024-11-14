@@ -9,5 +9,6 @@ return [
     'update' => 'update',
     'send' => 'send',
     'login_discord' => 'Login with Discord',
-    'add_post' => 'Add Posts'
+    'add_post' => 'Add Posts',
+    'how_get_rewards' => 'How to get rewards?',
 ];

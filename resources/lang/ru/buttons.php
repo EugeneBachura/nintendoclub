@@ -9,5 +9,6 @@ return [
     'update' => 'обновить',
     'send' => 'выслать',
     'login_discord' => 'Вход через Discord',
-    'add_post' => 'Добавить Пост'
+    'add_post' => 'Добавить Пост',
+    'how_get_rewards' => 'Как получить награды?',
 ];
