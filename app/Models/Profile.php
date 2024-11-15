@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use App\Notifications\UserNotification;
 
-
 class Profile extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'experience',
         'coins',
@@ -20,6 +20,7 @@ class Profile extends Model
         'daily_visits_count',
         'last_active_at'
     ];
+
     protected $casts = [
         'last_active_at' => 'datetime',
     ];
@@ -29,35 +30,6 @@ class Profile extends Model
         return $this->belongsToMany(Game::class, 'profile_game');
     }
 
-<<<<<<< Updated upstream
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function badges()
-    {
-        return $this->user->badges();
-    }
-
-=======
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-    public function experienceToNextLevel($currentLevel)
-    {
-        $currentLevelEntry = Level::where('level', $currentLevel)->first();
-        $nextLevelEntry = Level::where('level', '>', $currentLevel)->orderBy('level', 'asc')->first();
-
-        if ($currentLevelEntry && $nextLevelEntry) {
-            // Разница между требованиями опыта следующего и текущего уровня
-            return $nextLevelEntry->experience_required - $currentLevelEntry->experience_required;
-        }
-
-<<<<<<< Updated upstream
-        return null; // Если достигнут максимальный уровень
-=======
-        // Возвращаем null, если пользователь достиг максимального уровня
-=======
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -70,28 +42,17 @@ class Profile extends Model
 
     public function experienceToNextLevel()
     {
-        // Получаем текущий уровень пользователя
         $currentLevel = $this->level;
-
-        // Ищем запись уровня в базе данных
         $currentLevelEntry = Level::where('level', $currentLevel)->first();
+
         if (!$currentLevelEntry) {
-            return null; // Возвращаем null, если уровень не найден
+            return null; // Если уровень не найден
         }
 
-        // Определяем следующий уровень
         $nextLevelEntry = Level::where('level', '>', $currentLevel)->orderBy('level')->first();
-        if ($nextLevelEntry) {
-            // Возвращаем опыт, необходимый для следующего уровня
-            return $nextLevelEntry->experience_required;
-        }
 
-        // Если следующий уровень отсутствует, значит, пользователь достиг максимального уровня
->>>>>>> Stashed changes
-        return null;
->>>>>>> Stashed changes
+        return $nextLevelEntry ? $nextLevelEntry->experience_required : null;
     }
-
 
     public function nickname()
     {
@@ -115,11 +76,7 @@ class Profile extends Model
         $currentLevelEntry = Level::where('level', $currentLevel)->firstOrFail();
         $nextLevelEntry = Level::where('level', '>', $currentLevel)->orderBy('level', 'asc')->first();
 
-        if ($nextLevelEntry) {
-            return $nextLevelEntry->experience_required;
-        }
-
-        return null;
+        return $nextLevelEntry ? $nextLevelEntry->experience_required : null;
     }
 
     public function addExp($exp)
@@ -142,7 +99,6 @@ class Profile extends Model
             $this->level++;
             $this->save();
 
-            // Выдаём награды за достижение нового уровня
             $this->rewardForLevelUp($this->level);
         }
 
@@ -150,12 +106,6 @@ class Profile extends Model
         Log::info("New experience value: {$this->experience}, current level: {$this->level}");
         return true;
     }
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-}
-=======
->>>>>>> Stashed changes
 
     public function addPremiumPoints($points)
     {
@@ -176,14 +126,12 @@ class Profile extends Model
         $user = $this->user;
         $userItem = $user->inventory()->where('item_id', $item->id)->first();
         if ($userItem) {
-            // Увеличиваем количество, если не превышает max_quantity или max_quantity равно null
             if ($item->max_quantity === null || $userItem->quantity < $item->max_quantity) {
                 $userItem->increment('quantity');
             } else {
                 Log::info("Max items reached: {$itemId}");
             }
         } else {
-            // Если товара нет в инвентаре, добавляем его
             $user->inventory()->create([
                 'item_id' => $item->id,
                 'quantity' => 1
@@ -214,31 +162,26 @@ class Profile extends Model
         if ($levelEntry) {
             $rewardsGiven = [];
 
-            // Добавляем монеты, если они указаны
             if ($levelEntry->coins > 0) {
                 $this->addCoins($levelEntry->coins);
                 $rewardsGiven[] = ['type' => 'coins', 'quantity' => $levelEntry->coins];
             }
 
-            // Добавляем премиум-пункты, если они указаны
             if ($levelEntry->premium_points > 0) {
                 $this->addPremiumPoints($levelEntry->premium_points);
                 $rewardsGiven[] = ['type' => 'premium_points', 'quantity' => $levelEntry->premium_points];
             }
 
-            // Добавляем предмет, если он указан
             if ($levelEntry->item_id) {
                 $this->addItem($levelEntry->item_id);
                 $rewardsGiven[] = ['type' => 'item', 'item_id' => $levelEntry->item_id];
             }
 
-            // Добавляем значок, если он указан
             if ($levelEntry->badge_id) {
                 $this->addBadge($levelEntry->badge_id);
                 $rewardsGiven[] = ['type' => 'badge', 'badge_id' => $levelEntry->badge_id];
             }
 
-            // Отправляем уведомление пользователю о наградах
             if (!empty($rewardsGiven)) {
                 $this->sendRewardNotification($rewardsGiven);
             }
@@ -248,38 +191,15 @@ class Profile extends Model
     private function sendRewardNotification($rewardsGiven)
     {
         $user = $this->user;
-        $locale = $user->preferredLocale(); // Получаем локаль пользователя
+        $locale = $user->preferredLocale();
 
-<<<<<<< Updated upstream
-        // Составляем сообщение с учётом локали
-        $message = __('messages.level_up_title', ['level' => $this->level], $locale) . "\n";
-=======
-        // Временно устанавливаем локаль пользователя
         app()->setLocale($locale);
 
-        // Составляем сообщение с учётом локали
         $message = __('messages.level_up_title', ['level' => $this->level]) . "\n";
->>>>>>> Stashed changes
 
         foreach ($rewardsGiven as $reward) {
             switch ($reward['type']) {
                 case 'coins':
-<<<<<<< Updated upstream
-                    $message .= __('messages.reward_coins', ['quantity' => $reward['quantity']], $locale) . "\n";
-                    break;
-                case 'premium_points':
-                    $message .= __('messages.reward_premium_points', ['quantity' => $reward['quantity']], $locale) . "\n";
-                    break;
-                case 'item':
-                    $item = Item::find($reward['item_id']);
-                    $itemName = $item ? $item->getTranslation('name', $locale) : __('messages.unknown_item', [], $locale);
-                    $message .= __('messages.reward_item', ['name' => $itemName], $locale) . "\n";
-                    break;
-                case 'badge':
-                    $badge = Badge::find($reward['badge_id']);
-                    $badgeName = $badge ? $badge->getTranslation('name', $locale) : __('messages.unknown_badge', [], $locale);
-                    $message .= __('messages.reward_badge', ['name' => $badgeName], $locale) . "\n";
-=======
                     $message .= __('messages.reward_coins', ['quantity' => $reward['quantity']]) . "\n";
                     break;
                 case 'premium_points':
@@ -294,28 +214,14 @@ class Profile extends Model
                     $badge = Badge::find($reward['badge_id']);
                     $badgeName = $badge ? $badge->getTranslation('name', $locale) : __('messages.unknown_badge');
                     $message .= __('messages.reward_badge', ['name' => $badgeName]) . "\n";
->>>>>>> Stashed changes
                     break;
             }
         }
 
-        // URL to the inventory or profile
-<<<<<<< Updated upstream
-        $url = route('inventory.index');
-
-        // Отправляем уведомление
-        $user->notify((new UserNotification($message, $url))->locale($locale));
-    }
-}
-=======
         $url = route('inventory');
 
-        // Отправляем уведомление
         $user->notify((new UserNotification($message, $url))->locale($locale));
 
-        // Возвращаем локаль обратно на дефолтную
         app()->setLocale(config('app.locale'));
     }
 }
->>>>>>> Stashed changes
->>>>>>> Stashed changes

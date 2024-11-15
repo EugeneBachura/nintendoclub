@@ -8,6 +8,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\LevelController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OldUserController;
@@ -113,6 +114,9 @@ Route::group([
     Route::get('/pages/updates', function () {
         return view('pages.updates');
     })->name('updates');
+
+    // Level revards
+    Route::get('/awards', [LevelController::class, 'rewards'])->name('levels.rewards');
 
     // Post routes
     Route::get('/posts', [PostController::class, 'showAll'])->name('post.showAll');
