@@ -17,29 +17,18 @@
         </div>
         <div class="space-y-2 opacity-50 sm:text-sm text-xs ml-5 min-w-[150px]">
             <div class="space-y-1 flex flex-col items-end">
-                @if (app()->getLocale() == 'en')
-                    <div><a href="{{ route('terms') }}"
-                            class="text-content_text hover:text-content_text-hover">{{ __('titles.legal_information') }}</a>
-                    </div>
-                    <div><a href="{{ route('contacts') }}"
-                            class="text-content_text hover:text-content_text-hover">{{ __('titles.contact_administration') }}</a>
-                    </div>
-                    <div><a href="{{ route('profile.search') }}"
-                            class="text-content_text hover:text-content_text-hover">{{ __('titles.profile_search') }}</a>
-                    </div>
-                    {{-- <div><a href="/Awards" class="text-content_text hover:text-content_text-hover">Awards</a></div> --}}
-                @else
-                    <div><a href="{{ localized_url('terms') }}"
-                            class="text-content_text hover:text-content_text-hover">{{ __('titles.legal_information') }}</a>
-                    </div>
-                    <div><a href="{{ localized_url('contacts') }}"
-                            class="text-content_text hover:text-content_text-hover">{{ __('titles.contact_administration') }}</a>
-                    </div>
-                    <div><a href="{{ localized_url('profile.search') }}"
-                            class="text-content_text hover:text-content_text-hover">{{ __('titles.profile_search') }}</a>
-                    </div>
-                    {{-- <div><a href="/Awards" class="text-content_text hover:text-content_text-hover">Awards</a></div> --}}
-                @endif
+                <div><a href="{{ route('levels.rewards') }}"
+                        class="text-content_text hover:text-content_text-hover">{{ __('buttons.how_get_rewards') }}</a>
+                </div>
+                <div><a href="{{ route('terms') }}"
+                        class="text-content_text hover:text-content_text-hover">{{ __('titles.legal_information') }}</a>
+                </div>
+                <div><a href="{{ route('contacts') }}"
+                        class="text-content_text hover:text-content_text-hover">{{ __('titles.contact_administration') }}</a>
+                </div>
+                <div><a href="{{ route('profile.search') }}"
+                        class="text-content_text hover:text-content_text-hover">{{ __('titles.profile_search') }}</a>
+                </div>
             </div>
         </div>
     </div>
