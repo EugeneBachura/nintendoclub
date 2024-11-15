@@ -21,4 +21,5 @@ return [
     'nickname_color_description' => 'The color of the nickname on the server in Discord will also be changed within 10 minutes.',
     'exp' => 'exp.',
     'rewards' => 'Nagrody',
+    'experience' => 'Doświadczenie',
 ];

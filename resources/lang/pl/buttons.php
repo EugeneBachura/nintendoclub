@@ -6,8 +6,9 @@ return [
     'no_item' => 'brak towaru',
     'collect_daily' => 'Zbierz Codzienną Nagrodę',
     'today_collected' => 'Dzisiejsza Codzienna Nagroda została już zebrana',
-    'update' => 'update',
-    'send' => 'send',
-    'login_discord' => 'Login with Discord',
-    'add_post' => 'Add Posts'
+    'update' => 'aktualizuj',
+    'send' => 'wyślij',
+    'login_discord' => 'Zaloguj się przez Discord',
+    'add_post' => 'Dodaj Posty',
+    'how_get_rewards' => 'Jak zdobyć nagrody?',
 ];

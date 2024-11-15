@@ -22,5 +22,5 @@ return [
     'posts' => 'Посты',
     'games' => 'Игры',
     'users_posts' => 'Посты Пользователей',
-    'level_rewards' => 'Награды Уровней',
+    'level_rewards' => 'Награды',
 ];
