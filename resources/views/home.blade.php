@@ -43,7 +43,7 @@
     </x-slot>
 
     <div class="relative pb-6">
-        <div class="flex justify-between items-start">
+        <div class="flex justify-between items-start mt-2 sm:mt-0">
             <h2 class="flex font-semibold text-xl text-content_text leading-tight pb-3 px-0">
                 <div class="h-5 w-5 mr-1"><x-icon name="burn"></x-icon></div> {{ __('titles.popular_now') }}
             </h2>
@@ -135,8 +135,8 @@
 
     </div>
 
-    <div class="relative flex flex-wrap pt-4 space-y-4 sm:space-y-0">
-        <div class="w-full sm:w-1/3 sm:pr-4">
+    <div class="relative flex flex-wrap pt-0 sm:pt-4 space-y-4 sm:space-y-0">
+        <div class="w-full sm:w-1/3 pt-4 sm:pt-0 sm:pr-4 order-2 sm:order-1">
             <div>
                 <h2 class="flex font-semibold text-xl text-content_text leading-tight pb-4 px-0">
                     {{ __('titles.last_publications') }}</h2>
@@ -190,31 +190,34 @@
                     sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
             </div>
         </div>
-        <div class="sm:w-2/3">
+        <div class="w-full sm:w-2/3 sm:pr-4 order-1 sm:order-2">
             <h2 class="flex font-semibold text-xl text-content_text leading-tight pb-4 px-0">
                 {{ __('titles.users_posts') }}</h2>
             <div class="bg-content-hover p-4 rounded-lg">
                 @foreach ($categories as $category)
-                    <div class="mb-8">
+                    <div class="mb-2">
                         <h3 class="text-lg font-bold text-content_text">{{ $category->{'name_' . app()->getLocale()} }}
                         </h3>
-                        <div class="flex -mx-4">
+                        <div class="flex -mx-4 flex-wrap">
                             @foreach ($category->posts as $post)
                                 <div class="p-4 md:w-1/2">
                                     <div
-                                        class="h-full border-opacity-50 shadow border border-content_text rounded-lg overflow-hidden">
+                                        class="h-full flex flex-col border-opacity-50 shadow border border-content_text rounded-lg overflow-hidden">
                                         @if ($post->image)
                                             <img class="lg:h-48 md:h-36 w-full object-cover object-center"
                                                 src="{{ asset('storage/posts_images/' . $post->image) }}"
                                                 alt="post image">
                                         @endif
-                                        <div class="px-6 pt-5 pb-3">
-                                            <h2 class="tracking-widest text-xs title-font font-medium opacity-50 mb-1">
-                                                {{ $category->{'name_' . app()->getLocale()} }}
-                                            </h2>
-                                            <h1 class="text-lg font-bold mb-3">{{ $post->title }}</h1>
-                                            <p class="text-sm">{{ $post->trimmedContent }}</p>
-                                            <div class="flex items-center justify-between flex-wrap">
+                                        <div class="px-6 pt-5 pb-3 flex flex-col flex-1 justify-between">
+                                            <div>
+                                                <h2
+                                                    class="tracking-widest text-xs title-font font-medium opacity-50 mb-1">
+                                                    {{ $post->category->name }}
+                                                </h2>
+                                                <h1 class="text-lg font-bold mb-3">{{ $post->title }}</h1>
+                                                <p class="text-sm">{{ $post->trimmedContent }}</p>
+                                            </div>
+                                            <div class="flex items-center justify-between flex-wrap mt-2">
                                                 <div class="flex space-x-3">
                                                     @php $isLiked = $post->likes->contains('user_id', Auth::id()); @endphp
                                                     <x-icon-with-text icon="like"
