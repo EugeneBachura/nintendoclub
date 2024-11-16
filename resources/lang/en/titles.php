@@ -16,7 +16,7 @@ return [
     'daily_reward' => "Daily Reward",
     'history_shop' => "Shopping History",
     'legal_information' => 'Legal Information',
-    'contact_administration' => 'Contact Administration',
+    'contact_administration' => 'Contact Admin',
     'all_posts' => 'All Posts',
     'news' => 'News',
     'posts' => 'Posts',

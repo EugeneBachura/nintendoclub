@@ -4,9 +4,11 @@
         ClassicEditor
             .create(editorElement, {
                 extraPlugins: [CustomUploadAdapterPlugin],
-                toolbar: ['heading', '|', 'bold', 'italic', '|', 'link', 'imageUpload', '|', 'undo',
+                toolbar: ['heading', '|', 'bold', 'italic', '|', 'link', 'imageUpload',
+                    '|',
+                    'undo',
                     'redo', '|', 'bulletedList', 'numberedList', '|',
-                    'blockQuote',
+                    'blockQuote'
                 ],
             })
             .then(editor => {
