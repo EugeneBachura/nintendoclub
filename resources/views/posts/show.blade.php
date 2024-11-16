@@ -1,4 +1,7 @@
 <x-app-layout>
+    <x-slot name="lang">
+        {{ $post->language }}
+    </x-slot>
     <x-slot name="title">
         {{ $post->title }}
     </x-slot>
@@ -16,7 +19,7 @@
         <div class="pb-6 px-0 hidden sm:block md:px-6">
             <x-breadcrumb :breadcrumbs="$breadcrumbs" />
         </div>
-        <div class="flex z-0 justify-center items-center w-full min-h-[120px] sm:min-h-[400px] sm:rounded-t-lg relative"
+        <div class="flex z-0 justify-center items-center w-full min-h-[170px] sm:min-h-[400px] sm:rounded-t-lg relative"
             style="background-image: url('{{ asset('storage/posts_images/' . $post->image) }}'); background-size: cover; background-position: center center;">
             <div class="w-full h-full bg-black absolute top-0 left-0 opacity-30 -z-10 sm:rounded-t-lg"></div>
         </div>
@@ -24,7 +27,7 @@
     <x-slot name="slim"></x-slot>
 
     <div class="">
-        <div class="flex justify-between space-x-4">
+        <div class="flex flex-col sm:flex-row justify-between space-x-4">
             <div class="flex items-center">
                 <h1 class="font-semibold text-2xl text-color_text leading-tight z-10 uppercase">
                     {{ $post->title }}
@@ -145,6 +148,29 @@
                 margin-right: 0;
                 font-style: italic;
                 border-left: 5px solid #ccc;
+            }
+
+            figure.image {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+            }
+
+            figure.image.image-style-side {
+                float: right;
+                margin: 0 0 1em 1em;
+            }
+
+            /* mobile */
+            @media (max-width: 640px) {
+                figure.image.image-style-side {
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    justify-content: center;
+                    float: none;
+                }
             }
         </style>
 
