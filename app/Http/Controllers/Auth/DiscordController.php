@@ -96,7 +96,7 @@ class DiscordController extends \App\Http\Controllers\Controller
         }
 
         Auth::login($localUser, true);
-        return redirect('/dashboard');
+        return redirect('/profile');
     }
 
 
