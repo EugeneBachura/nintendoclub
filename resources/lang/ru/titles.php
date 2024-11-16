@@ -16,7 +16,7 @@ return [
     'daily_reward' => "Ежедневная Награда",
     'history_shop' => "История Покупок",
     'legal_information' => 'Правовая Информация',
-    'contact_administration' => 'Связаться с Администрацией',
+    'contact_administration' => 'Администрация',
     'all_posts' => 'Все Посты',
     'news' => 'Новости',
     'posts' => 'Посты',
