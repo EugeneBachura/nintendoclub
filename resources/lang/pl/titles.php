@@ -16,7 +16,7 @@ return [
     'daily_reward' => "Codzienna Nagroda",
     'history_shop' => "Historia Zakupów",
     'legal_information' => 'Informacje Prawne',
-    'contact_administration' => 'Kontakt z Administracją',
+    'contact_administration' => 'Administracją',
     'all_posts' => 'Wszystkie Posty',
     'news' => 'Newsy',
     'posts' => 'Posty',

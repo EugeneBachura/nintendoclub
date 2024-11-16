@@ -26,7 +26,7 @@
 
     {{-- Контент --}}
     <div class="">
-        <div class="flex justify-between space-x-4">
+        <div class="flex flex-col sm:flex-row justify-between space-x-4">
             <div class="flex items-center">
                 <h1 class="font-semibold text-2xl text-color_text leading-tight z-10 uppercase">
                     {{ $news->getTranslation('title', App::getLocale()) }}
@@ -107,6 +107,29 @@
             margin-right: 0;
             font-style: italic;
             border-left: 5px solid #ccc;
+        }
+
+        figure.image {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        figure.image.image-style-side {
+            float: right;
+            margin: 0 0 1em 1em;
+        }
+
+        /* mobile */
+        @media (max-width: 640px) {
+            figure.image.image-style-side {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                float: none;
+            }
         }
     </style>
 </x-app-layout>
