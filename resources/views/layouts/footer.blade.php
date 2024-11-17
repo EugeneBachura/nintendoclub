@@ -12,7 +12,8 @@
                 </a>
             </div>
             </p>
-            <p class="text-xs text-content_text opacity-50 sm:text-sm">A place where Nintendo fans unite, we play with
+            <p class="text-xs text-content_text opacity-50 sm:text-sm max-w-[200px]">A place where Nintendo fans unite,
+                we play with
                 heart!</p>
         </div>
         <div class="space-y-2 opacity-50 sm:text-sm text-xs ml-5 min-w-[150px]">

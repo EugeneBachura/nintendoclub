@@ -31,7 +31,7 @@
                                             {{ $news->getTranslation('title', app()->getLocale()) }}</h2>
                                     </div>
                                 </div>
-                                <p class=text-sm">{!! $news->trimmedContent !!}</p>
+                                <p class="text-sm">{!! $news->trimmedContent !!}</p>
                                 <div class="pl-3 md:pl-0 flex justify-end space-x-1">
                                     <div class="flex h-max align-middle items-center space-x-1 rounded-lg">
                                         <div class="h-5 w-5 mt-0.5">
