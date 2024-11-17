@@ -111,7 +111,7 @@ class NewsController extends Controller
         ]);
 
         // Валидация зависимых полей
-        $languages = ['en', 'ru', 'pl']; // Список поддерживаемых языков
+        $languages = config('localization.supported_locales');
         foreach ($languages as $lang) {
             $validator->sometimes("{$lang}_title", 'required_with:' . "{$lang}_content", function ($input) use ($lang) {
                 return $input["{$lang}_content"] || $input["{$lang}_title"];
@@ -235,7 +235,7 @@ class NewsController extends Controller
         ]);
 
         // Валидация зависимых полей
-        $languages = ['en', 'ru', 'pl']; // Список поддерживаемых языков
+        $languages = config('localization.supported_locales');
         foreach ($languages as $lang) {
             $validator->sometimes("{$lang}_title", 'required_with:' . "{$lang}_content", function ($input) use ($lang) {
                 return $input["{$lang}_content"] || $input["{$lang}_title"];
