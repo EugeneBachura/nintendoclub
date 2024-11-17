@@ -111,7 +111,7 @@ class NewsController extends Controller
         ]);
 
         // Валидация зависимых полей
-        $languages = ['en', 'ru', 'pl']; // Список поддерживаемых языков
+        $languages = config('localization.supported_locales');
         foreach ($languages as $lang) {
             $validator->sometimes("{$lang}_title", 'required_with:' . "{$lang}_content", function ($input) use ($lang) {
                 return $input["{$lang}_content"] || $input["{$lang}_title"];
@@ -158,11 +158,10 @@ class NewsController extends Controller
         $news->save();
 
         // Обновление или создание переводов
-        $languages = ['en', 'ru', 'pl'];
         foreach ($languages as $lang) {
             if ($request->input("{$lang}_title") && $request->input("{$lang}_content")) {
                 $dirtyHtml = trim($request->input("{$lang}_content"));
-                $allowedTags = '<b><i><img><br><p>';
+                $allowedTags = '<b><i><img><br><p><h1><h2><h3><h4><h5><h6><ul><ol><li><a><strong><em><u><s><sub><sup><blockquote>';
                 $cleanHtml = strip_tags($dirtyHtml, $allowedTags);
                 $cleanHtml = $this->sanitizeImageTags($cleanHtml);
                 $cleanHtml = str_replace("'", "&apos;", $cleanHtml);
@@ -235,7 +234,7 @@ class NewsController extends Controller
         ]);
 
         // Валидация зависимых полей
-        $languages = ['en', 'ru', 'pl']; // Список поддерживаемых языков
+        $languages = config('localization.supported_locales');
         foreach ($languages as $lang) {
             $validator->sometimes("{$lang}_title", 'required_with:' . "{$lang}_content", function ($input) use ($lang) {
                 return $input["{$lang}_content"] || $input["{$lang}_title"];
@@ -290,7 +289,7 @@ class NewsController extends Controller
         foreach ($languages as $lang) {
             if ($request->input("{$lang}_title") && $request->input("{$lang}_content")) {
                 $dirtyHtml = trim($request->input("{$lang}_content"));
-                $allowedTags = '<b><i><img><br><p>';
+                $allowedTags = '<b><i><img><br><p><h1><h2><h3><h4><h5><h6><ul><ol><li><a><strong><em><u><s><sub><sup><blockquote>';
                 $cleanHtml = strip_tags($dirtyHtml, $allowedTags);
                 $cleanHtml = $this->sanitizeImageTags($cleanHtml);
                 $cleanHtml = str_replace("'", "&apos;", $cleanHtml);

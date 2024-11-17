@@ -97,7 +97,7 @@ class PostController extends Controller
             'likes', // Загружаем лайки для поста
         ])
             ->where('alias', $alias)
-            ->where('language', $locale)
+            //->where('language', $locale)
             ->firstOrFail();
 
         // Увеличиваем количество просмотров
@@ -163,7 +163,7 @@ class PostController extends Controller
         $user = auth()->user();
         $userLevel = $user->profile->level ?? 0;
 
-        if ($userLevel < 3) {
+        if ($userLevel < 2) {
             return redirect()->back()->with('error', 'Your level is too low to create a post. You need a level 3.');
         }
 

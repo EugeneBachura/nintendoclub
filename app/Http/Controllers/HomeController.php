@@ -32,11 +32,14 @@ class HomeController extends Controller
         $categories = PostCategory::with(['posts' => function ($query) {
             $query->where('status', 'active')
                 ->where('language', app()->getLocale()) // Фильтруем по текущей локали
-                ->latest()
-                ->take(2); // Ограничиваем до 2 постов
+                ->latest();
         }])->get()->filter(function ($category) {
             return $category->posts->isNotEmpty(); // Оставляем только категории с постами
-        });
+        })->map(function ($category) {
+            // Ограничиваем количество постов до 2 после загрузки данных
+            $category->setRelation('posts', $category->posts->take(2));
+            return $category;
+        });;
 
         return view('home', [
             'latestNews' => $latestNews,
