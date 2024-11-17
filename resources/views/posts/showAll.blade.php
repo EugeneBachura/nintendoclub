@@ -11,7 +11,7 @@
                     <x-breadcrumb :breadcrumbs="$breadcrumbs" />
                 </div>
             </div>
-            @if (auth()->user() && auth()->user()->profile->level >= 3)
+            @if (auth()->user() && auth()->user()->profile->level >= 2)
                 <div>
                     <x-button-link href="{{ route('post.create') }}">
                         {{ __('buttons.add_post') }}
@@ -28,18 +28,20 @@
                     @foreach ($posts as $post)
                         <div class="p-4 md:w-1/3">
                             <div
-                                class="h-full border-opacity-50 shadow border border-content_text rounded-lg overflow-hidden">
+                                class="h-full flex flex-col border-opacity-50 shadow border border-content_text rounded-lg overflow-hidden">
                                 @if ($post->image)
                                     <img class="lg:h-48 md:h-36 w-full object-cover object-center"
                                         src="{{ asset('storage/posts_images/' . $post->image) }}" alt="post image">
                                 @endif
-                                <div class="px-6 pt-5 pb-3">
-                                    <h2 class="tracking-widest text-xs title-font font-medium opacity-50 mb-1">
-                                        {{ $post->category->name }}
-                                    </h2>
-                                    <h1 class="text-lg font-bold mb-3">{{ $post->title }}</h1>
-                                    <p class="text-sm">{{ $post->trimmedContent }}</p>
-                                    <div class="flex items-center justify-between flex-wrap">
+                                <div class="px-6 pt-5 pb-3 flex flex-col flex-1 justify-between">
+                                    <div>
+                                        <h2 class="tracking-widest text-xs title-font font-medium opacity-50 mb-1">
+                                            {{ $post->category->name }}
+                                        </h2>
+                                        <h1 class="text-lg font-bold mb-3">{{ $post->title }}</h1>
+                                        <p class="text-sm">{{ $post->trimmedContent }}</p>
+                                    </div>
+                                    <div class="flex items-center justify-between flex-wrap mt-2">
                                         <div class="flex space-x-3">
                                             @php $isLiked = $post->likes->contains('user_id', Auth::id()); @endphp
                                             <x-icon-with-text icon="like"

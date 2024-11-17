@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@isset($lang)
+    <html lang="{{ $lang }}">
+@else
+    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@endisset
 
 <head>
     <meta charset="utf-8">

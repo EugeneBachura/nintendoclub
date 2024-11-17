@@ -11,7 +11,7 @@ class SetLocale
     public function handle($request, Closure $next)
     {
         // Определяем поддерживаемые языки
-        $supportedLocales = ['en', 'ru', 'pl'];
+        $supportedLocales = config('localization.supported_locales');
 
         // Получаем язык из параметра ?lang или из сессии/предпочтений пользователя
         $locale = $request->query('lang', session('locale', Auth::user()->locale ?? config('app.locale')));
