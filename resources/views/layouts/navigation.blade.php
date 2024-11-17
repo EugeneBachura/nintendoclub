@@ -32,7 +32,7 @@
             </div>
 
             {{-- Right Side --}}
-            <div class="flex items-center content-center justify-end space-x-5 flex-1">
+            <div class="flex items-center content-center justify-end space-x-3 flex-1 sm:space-x-5">
                 <x-language-switcher />
 
                 @if (Auth::check())
@@ -130,7 +130,7 @@
     @auth
         <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
             {{-- Responsive Links --}}
-            <div class="pt-2 pb-3 space-y-1">
+            <div class="pt-2 space-y-1">
                 <x-responsive-nav-link href="{{ localized_url('news.showAll') }}">
                     {{ __('titles.news') }}
                 </x-responsive-nav-link>
@@ -143,8 +143,8 @@
             </div>
 
             {{-- Responsive Settings Options --}}
-            <div class="pt-4 pb-1 border-t border-gray-200">
-                <div class="mt-3 space-y-1">
+            <div class="">
+                <div class="mt-1 mb-2 space-y-1">
                     <x-responsive-nav-link href="{{ localized_url('dashboard') }}">
                         {{ __('titles.dashboard') }}
                     </x-responsive-nav-link>
