@@ -49,7 +49,7 @@
                                                 tooltip="{{ __('interfaces.likes') }}">
                                                 {{ $post->likes->count() }}
                                             </x-icon-with-text>
-                                            <x-icon-with-text icon="eye" fill="#252525"
+                                            <x-icon-with-text icon="eye" fill="#ffffff"
                                                 tooltip="{{ __('interfaces.views') }}">
                                                 {{ $post->views_count }}
                                             </x-icon-with-text>

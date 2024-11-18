@@ -50,7 +50,7 @@
                             <span class="likes-count">{{ $post->likes->count() }}</span>
                         </x-icon-with-text>
                     </div>
-                    <x-icon-with-text icon="eye" fill="#252525">{{ $post->views_count }}</x-icon-with-text>
+                    <x-icon-with-text icon="eye" fill="#ffffff">{{ $post->views_count }}</x-icon-with-text>
                     <x-icon-with-text icon="comments" fill="#252525">{{ $post->comments_count }}</x-icon-with-text>
                 </div>
             </div>
