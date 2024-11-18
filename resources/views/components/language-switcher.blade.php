@@ -1,6 +1,6 @@
 <div class="language-switcher" x-data="{ open: false }">
     <div @click="open = !open"
-        class="cursor-pointer ring-1 ring-content_text ring-opacity-25 flex items-center justify-center p-1 bg-content-hover rounded-lg hover:bg-content-hover">
+        class="cursor-pointer ring-1 ring-content_text ring-opacity-25 flex items-center justify-center py-1 px-2 border-2 border-content-hover bg-content-hover rounded hover:bg-content-hover">
         <div class="h-6 w-6 mr-0 sm:mr-1"><x-icon name="language"></x-icon></div>
         <div class="font-bold text-sm mr-0 sm:mr-1 hidden sm:flex">{{ __('interfaces.language') }}</div>
     </div>
