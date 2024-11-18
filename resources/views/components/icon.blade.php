@@ -400,21 +400,16 @@
     @break
 
     @case('eye')
-        {{-- <svg fill="#ffffff" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 98.48 98.48" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M97.204,45.788c-0.865-1.02-21.537-24.945-47.963-24.945c-26.427,0-47.098,23.925-47.965,24.946 c-1.701,2-1.701,4.902,0.001,6.904c0.866,1.02,21.537,24.944,47.964,24.944c26.426,0,47.098-23.926,47.964-24.946 C98.906,50.691,98.906,47.789,97.204,45.788z M57.313,35.215c1.777-0.97,4.255,0.143,5.534,2.485 c1.279,2.343,0.875,5.029-0.902,5.999c-1.776,0.971-4.255-0.143-5.535-2.485C55.132,38.871,55.535,36.185,57.313,35.215z M49.241,68.969c-18.46,0-33.995-14.177-39.372-19.729c3.631-3.75,11.898-11.429,22.567-16.021 c-2.081,3.166-3.301,6.949-3.301,11.021c0,11.104,9.001,20.105,20.105,20.105s20.106-9.001,20.106-20.105 c0-4.072-1.219-7.855-3.3-11.021C76.715,37.812,84.981,45.49,88.612,49.24C83.235,54.795,67.7,68.969,49.241,68.969z"></path> </g> </g></svg> --}}
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg fill="{{ $fill }}" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 42.00 42.00" enable-background="new 0 0 42 42"
+            xml:space="preserve" transform="rotate(0)" stroke="{{ $fill }}" stroke-width="1.302">
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="{{ $fill }}"
+                stroke-width="0.42000000000000004"></g>
             <g id="SVGRepo_iconCarrier">
-                <rect width="48" height="48" fill="white" fill-opacity="0.01"></rect>
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M24 40.9999C33.9411 40.9999 42 32.6778 42 26.9999C42 21.3219 33.9411 12.9999 24 12.9999C14.0589 12.9999 6 21.3277 6 26.9999C6 32.6721 14.0589 40.9999 24 40.9999Z"
-                    fill="{{ $fill }}" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"></path>
                 <path
-                    d="M24 32.9999C27.3137 32.9999 30 30.3136 30 26.9999C30 23.6862 27.3137 20.9999 24 20.9999C20.6863 20.9999 18 23.6862 18 26.9999C18 30.3136 20.6863 32.9999 24 32.9999Z"
-                    fill="#ffffff" stroke="white" stroke-width="4" stroke-linejoin="round"></path>
-                <path d="M13.2637 11.266L15.8582 14.8862" stroke="#ffffff" stroke-width="4" stroke-linecap="round"></path>
-                <path d="M35.625 11.7103L33.0304 15.3305" stroke="#ffffff" stroke-width="4" stroke-linecap="round"></path>
-                <path d="M24.0088 6.99988V12.9999" stroke="#ffffff" stroke-width="4" stroke-linecap="round"></path>
+                    d="M15.3,20.1c0,3.1,2.6,5.7,5.7,5.7s5.7-2.6,5.7-5.7s-2.6-5.7-5.7-5.7S15.3,17,15.3,20.1z M23.4,32.4 C30.1,30.9,40.5,22,40.5,22s-7.7-12-18-13.3c-0.6-0.1-2.6-0.1-3-0.1c-10,1-18,13.7-18,13.7s8.7,8.6,17,9.9 C19.4,32.6,22.4,32.6,23.4,32.4z M11.1,20.7c0-5.2,4.4-9.4,9.9-9.4s9.9,4.2,9.9,9.4S26.5,30,21,30S11.1,25.8,11.1,20.7z">
+                </path>
             </g>
         </svg>
     @break
