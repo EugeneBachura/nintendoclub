@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\News;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class DecreaseNewsPopularity extends Command
 {
@@ -26,12 +27,19 @@ class DecreaseNewsPopularity extends Command
      */
     public function handle()
     {
-        // Уменьшение популярности всех новостей на 10 единиц, но не менее нуля
-        News::where('popularity', '>=', 10)
-            ->decrement('popularity', 10); // уменьшаем на 10
+        // Логируем старт команды
+        Log::info("Starting news:decrease-popularity command");
 
-        // Если популярность меньше 10, то устанавливаем её в ноль
-        News::where('popularity', '<', 10)
-            ->update(['popularity' => 0]);
+        // Уменьшаем популярность для всех записей, где она больше 0
+        $decreased = News::where('popularity', '>', 0)->decrement('popularity', 10);
+
+        // Логируем количество обновлённых записей
+        Log::info("News popularity decreased for {$decreased} records.");
+
+        // Устанавливаем популярность в 0, если она меньше 0
+        $zeroed = News::where('popularity', '<', 0)->update(['popularity' => 0]);
+
+        // Логируем количество записей, обнулённых популярностью
+        Log::info("News popularity set to zero for {$zeroed} records.");
     }
 }
