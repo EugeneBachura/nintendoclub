@@ -347,12 +347,13 @@ class NewsController extends Controller
                 $user->profile()->increment('coins');
                 $rewards[] = (object) ['icon' => 'coins', 'quantity' => 1, 'item' => 'coins'];
             }
+            $news->increment('popularity', 1);
+        } else {
+            // Если пользователь не авторизован, увеличиваем популярность только на 1
+            $news->increment('popularity', 1);
         }
 
         $news->increment('views_count');
-        if ($news->views_count % 3 == 0) {
-            $news->increment('popularity');
-        }
 
         $seo_description = $translation->seo_description;
         $seo_keywords = $translation->keywords;
