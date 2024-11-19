@@ -32,15 +32,29 @@
                     {{ $news->getTranslation('title', App::getLocale()) }}
                 </h1>
             </div>
-            <div class="pl-3 md:pl-0 flex justify-end space-x-1">
-                <div class="flex h-max align-middle items-center space-x-1 rounded-lg">
-                    <div class="h-5 w-5 mt-0.5">
-                        <x-icon name="burn" :fill="$popularityColor"></x-icon>
+            <div class="pl-3 md:pl-0 flex justify-end space-x-3">
+                <div class="flex justify-end space-x-1">
+                    <div class="flex h-max align-middle items-center space-x-1 rounded-lg">
+                        <div class="h-5 w-5 mt-0.5">
+                            <x-icon name="burn" :fill="$popularityColor"></x-icon>
+                        </div>
+                    </div>
+                    <div class="flex h-max align-middle items-center space-x-1.5 rounded-lg">
+                        <div class="mt-0.5">
+                            {{ $news->popularity }}
+                        </div>
                     </div>
                 </div>
-                <div class="flex h-max align-middle items-center space-x-1.5 rounded-lg">
-                    <div class="mt-0.5">
-                        {{ $news->views_count }}
+                <div class="flex justify-end space-x-2">
+                    <div class="flex h-max align-middle items-center space-x-1 rounded-lg">
+                        <div class="h-5 w-5 mt-0.5">
+                            <x-icon name="eye" fill="#fff"></x-icon>
+                        </div>
+                    </div>
+                    <div class="flex h-max align-middle items-center space-x-1.5 rounded-lg">
+                        <div class="mt-0.5">
+                            {{ $news->views_count }}
+                        </div>
                     </div>
                 </div>
             </div>

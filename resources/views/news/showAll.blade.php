@@ -40,7 +40,7 @@
                                     </div>
                                     <div class="flex h-max align-middle items-center space-x-1.5 rounded-lg">
                                         <div class="mt-0.5">
-                                            {{ $news->views_count }}
+                                            {{ $news->popularity }}
                                         </div>
                                     </div>
                                 </div>
