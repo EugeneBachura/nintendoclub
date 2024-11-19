@@ -151,31 +151,13 @@
                                             <div class="flex justify-between space-x-4">
                                                 <div class="flex items-center">
                                                     <h4 class="font-bold text-sm">
-                                                        {{ $news->getTranslation('title', app()->getLocale()) }}</h4>
+                                                        {{ $news->getTranslation('title', app()->getLocale()) }}
+                                                    </h4>
                                                 </div>
                                             </div>
-                                            @php
-                                                $content = $news->getTranslation('content', app()->getLocale());
-                                                $limit = 100;
-                                                if (app()->getLocale() == 'en') {
-                                                    $limit = 90;
-                                                }
-                                                if (app()->getLocale() == 'ru') {
-                                                    $limit = 300;
-                                                }
-                                                if (app()->getLocale() == 'pl') {
-                                                    $limit = 100;
-                                                }
-                                                $ending = '...';
-
-                                                if (mb_strlen($content) > $limit) {
-                                                    $cutOff = mb_strripos(mb_substr($content, 0, $limit), ' ');
-                                                    $trimmed = mb_substr($content, 0, $cutOff) . $ending;
-                                                } else {
-                                                    $trimmed = $content;
-                                                }
-                                            @endphp
-                                            <div class="text-content_text text-sm mt-1">{!! $trimmed !!}</div>
+                                            <div class="text-content_text text-sm mt-1">
+                                                {{ $news->getTrimmedContent() }}
+                                            </div>
                                         </div>
                                     </div>
                                 </a>
@@ -225,7 +207,7 @@
                                                         tooltip="{{ __('interfaces.likes') }}">
                                                         {{ $post->likes->count() }}
                                                     </x-icon-with-text>
-                                                    <x-icon-with-text icon="eye" fill="#252525"
+                                                    <x-icon-with-text icon="eye" fill="#ffffff"
                                                         tooltip="{{ __('interfaces.views') }}">
                                                         {{ $post->views_count }}
                                                     </x-icon-with-text>

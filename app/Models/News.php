@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class News extends Model
 {
@@ -52,5 +53,25 @@ class News extends Model
         $blue = 0;
 
         return "rgb($red, $green, $blue)";
+    }
+
+    /**
+     * Возвращает сокращённое описание новости для указанного языка.
+     *
+     * @param string|null $locale
+     * @param int $limit
+     * @return string
+     */
+    public function getTrimmedContent($locale = null, $limit = 100)
+    {
+        $locale = $locale ?? app()->getLocale(); // Используем текущую локаль, если не указана
+        $content = $this->getTranslation('content', $locale); // Получаем перевод контента
+
+        if (!$content) {
+            return '';
+        }
+
+        $plainContent = html_entity_decode(strip_tags($content)); // Убираем HTML-теги и декодируем сущности
+        return Str::limit($plainContent, $limit, '...'); // Ограничиваем длину текста
     }
 }
