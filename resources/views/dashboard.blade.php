@@ -13,7 +13,8 @@
         </div>
     </div>
 
+    {{-- Ссылка на страницу с наградами --}}
     <div class="text-xs opacity-50 flex justify-end w-full pt-2 -mb-4">
-        <a href="{{ route('updates') }}">Test Ver. 0.3.2</a>
+        <a href="{{ route('updates') }}">Test Ver. 0.3.11</a>
     </div>
 </x-app-layout>
