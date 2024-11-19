@@ -14,6 +14,22 @@
     <div class="text-color_text space-y-5">
         <div class="container mx-auto px-4">
             <section class="mb-6">
+                <h2 class="text-base font-semibold mb-2">Test Version 0.3.11</h2>
+                <div class="text-xs space-y-1">
+                    <div>Localization of pages has been improved. Now the button works on every page and also memorizes
+                        settings for each user.</div>
+                    <div>Implemented dynamic category display on the homepage, showing up to 3 active posts per
+                        category.</div>
+                    <div>The level up system has been changed, as well as all levels reset to 1.</div>
+                    <div>Some functions and layout for publishing posts and news have been changed.</div>
+                    <div>General bug fixes and performance improvements for smoother user experience.</div>
+                    <div>List and quotes have been added to the editor for news and posts.</div>
+                    <div>Fixes in the mobile version of the site.</div>
+                    <div>Fixing links with localization</div>
+                    <div>Adding an awards page</div>
+                </div>
+            </section>
+            <section class="mb-6">
                 <h2 class="text-base font-semibold mb-2">Test Version 0.3.2</h2>
                 <div class="text-xs space-y-1">
                     <div>Updated game listing layout with logo, title, release date, and

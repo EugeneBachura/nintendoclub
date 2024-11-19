@@ -27,13 +27,17 @@
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <link rel="icon" type="image/x-icon" href="/favicon2.ico">
 
-    @foreach (['en', 'ru', 'pl'] as $lang)
-        @php
-            // Используем текущий маршрут и параметры, добавляем нужный язык
-            $routeParameters = array_merge(Route::current()->parameters(), ['lang' => $lang]);
-        @endphp
-        <link rel="alternate" hreflang="{{ $lang }}"
-            href="{{ route(Route::currentRouteName(), $routeParameters) }}" />
+    @foreach (config('localization.supported_locales') as $lang)
+        @if (Route::current())
+            @php
+                // Получаем текущий маршрут и параметры, добавляем нужный язык
+                $routeParameters = array_merge(Route::current()->parameters() ?? [], ['lang' => $lang]);
+            @endphp
+            <link rel="alternate" hreflang="{{ $lang }}"
+                href="{{ route(Route::currentRouteName(), $routeParameters) }}" />
+        @else
+            <link rel="alternate" hreflang="{{ $lang }}" href="/" />
+        @endif
     @endforeach
 
     <meta name="yandex-verification" content="ee55c0e31dad4115" />
