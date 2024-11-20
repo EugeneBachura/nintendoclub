@@ -18,4 +18,5 @@ return [
     'reward_badge' => "- Badge: :name",
     'unknown_item' => "Unknown item",
     'unknown_badge' => "Unknown badge",
+    'login_to_like' => 'You must be logged in to like the post.',
 ];

@@ -12,6 +12,11 @@ class PostLikeController extends Controller
     public function toggleLike($postId)
     {
         $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $post = Post::findOrFail($postId);
         $like = $post->likes()->where('user_id', $user->id)->first();
 

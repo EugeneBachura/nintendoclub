@@ -18,4 +18,5 @@ return [
     'reward_badge' => "- Odznaka: :name",
     'unknown_item' => "Nieznany przedmiot",
     'unknown_badge' => "Nieznana odznaka",
+    'login_to_like' => 'Musisz być zalogowany, aby polubić post.',
 ];
