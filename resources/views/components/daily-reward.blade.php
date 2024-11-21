@@ -77,12 +77,8 @@
         @csrf
         <div class="flex flex-col">
             <button type="submit" {{ $collectedToday ? 'disabled' : '' }}
-                {{ $attributes->merge(['type' => 'submit', 'class' => 'inline-flex items-center px-4 py-2 bg-success border border-transparent rounded-md font-semibold text-xs text-success-text uppercase tracking-widest hover:bg-success-hover active:bg-success-900 focus:outline-none focus:border-success-900 focus:ring focus:ring-success-300 disabled:opacity-25 transition']) }}>
-                @if (!$collectedToday)
-                    {{ __('buttons.collect_daily') }}
-                @else
-                    {{ __('buttons.today_collected') }}
-                @endif
+                class="inline-flex items-center px-4 py-2 bg-success border border-transparent rounded-md {{ $collectedToday ? 'opacity-50' : '' }}">
+                {{ $collectedToday ? __('buttons.today_collected') : __('buttons.collect_daily') }}
             </button>
             @if ($collectedToday)
                 <div class="mt-1 text-xs text-content_text opacity-50" x-data="rewardTimer('{{ now() }}')">
