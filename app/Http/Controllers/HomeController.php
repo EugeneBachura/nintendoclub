@@ -55,17 +55,16 @@ class HomeController extends Controller
     {
         $user = auth()->user();
         $profile = $user->profile;
-        if ($profile->last_reward_collected_at != null) {
-            $last_reward_collected_at = Carbon::parse($profile->last_reward_collected_at);
-            $last_reward_collected_at = $last_reward_collected_at->isToday();
-        } else {
-            $last_reward_collected_at = false;
-        }
+
+        // Проверяем, была ли награда собрана сегодня
+        $last_reward_collected_at = $profile->last_reward_collected_at
+            ? Carbon::parse($profile->last_reward_collected_at)->isToday()
+            : false;
 
         return view('dashboard', [
             'collectedDays' => $profile->consecutive_days,
             'collectedToday' => $last_reward_collected_at,
-            'name' => $profile->nickname()
+            'name' => $profile->nickname(),
         ]);
     }
 }
