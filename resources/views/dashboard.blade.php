@@ -9,7 +9,7 @@
     <div class="text-color_text">
         <div>
             <h3 class="text-content_text text-lg">{{ __('titles.daily_reward') }}</h3>
-            <x-daily-reward collectedDays={{ $collectedDays }} collectedToday={{ $collectedToday }} />
+            <x-daily-reward :collectedDays="$collectedDays" :collectedToday="$collectedToday" />
         </div>
     </div>
 

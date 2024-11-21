@@ -13,62 +13,40 @@ class DailyRewardController extends Controller
         $user = auth()->user();
         $profile = $user->profile;
 
-        $last_reward_collected_at = Carbon::parse($profile->last_reward_collected_at);
-
-        // Проверка, можно ли собрать награду
-        if ($profile->last_reward_collected_at && $last_reward_collected_at->isToday()) {
+        // Проверяем, была ли награда собрана сегодня
+        if ($profile->last_reward_collected_at && Carbon::parse($profile->last_reward_collected_at)->isToday()) {
             return redirect()->back()->withErrors(__('messages.award_collected_today'));
         }
 
-        // if ($profile->consecutive_days == 0) {
-        //     $profile->consecutive_days = 1;
-        // }
+        // Увеличиваем счетчик дней
+        $profile->consecutive_days = ($profile->consecutive_days % 7) + 1;
 
-        $profile->consecutive_days = $profile->consecutive_days + 1;
+        // Определяем награды
+        $rewards = match ($profile->consecutive_days) {
+            1 => ['coins' => 1],
+            2 => ['coins' => 2],
+            3 => ['coins' => 3],
+            4 => ['coins' => 4],
+            5 => ['coins' => 5],
+            6 => ['coins' => 6],
+            7 => ['premium_points' => 1],
+            default => [],
+        };
 
-        $rewards = [];
-        switch ($profile->consecutive_days) {
-            case 1:
-                $profile->coins += 1;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 2, 'item' => __('profiles.coins'));
-                break;
-            case 2:
-                // добавить предмет "Megaball" в инвентарь пользователя
-                // $this->addItemToInventory($user, 'Megaball', 2);
-                //$rewards[] = (object) array('icon' => 'megaball', 'quantity' => 2, 'item' => __('profiles.megaball'));
-                $profile->coins += 2;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 3, 'item' => __('profiles.coins'));
-                break;
-            case 3:
-                $profile->coins += 3;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 3, 'item' => __('profiles.coins'));
-                break;
-            case 4:
-                $profile->coins += 4;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 4, 'item' => __('profiles.coins'));
-                break;
-            case 5:
-                $profile->coins += 5;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 5, 'item' => __('profiles.coins'));
-                break;
-            case 6:
-                $profile->coins += 6;
-                $rewards[] = (object) array('icon' => 'coins', 'quantity' => 5, 'item' => __('profiles.coins'));
-                break;
-            case 7:
-                $profile->premium_points += 1;
-                $rewards[] = (object) array('icon' => 'premium_points', 'quantity' => 1, 'item' => __('profiles.premium_points'));
-                //$this->addItemToInventory($user, 'Ultraball', 1);
-                //$rewards[] = (object) array('icon' => 'ultraball', 'quantity' => 3, 'item' => __('profiles.ultraball'));
-                break;
+        // Применяем награды
+        foreach ($rewards as $type => $quantity) {
+            if ($type === 'coins') {
+                $profile->coins += $quantity;
+            } elseif ($type === 'premium_points') {
+                $profile->premium_points += $quantity;
+            }
         }
 
-        // Обновить последнее время сбора награды и обнулить счетчик после 7 дней
+        // Сохраняем профиль
         $profile->last_reward_collected_at = now();
-        $profile->consecutive_days = $profile->consecutive_days % 7;
         $profile->save();
 
-        return redirect()->back()->with('rewards', $rewards);
+        return redirect()->back()->with('success', __('messages.daily_reward_collected'));
     }
 
     private function addItemToInventory($user, $itemName, $quantity)
