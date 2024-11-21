@@ -8,7 +8,7 @@ return [
     'buy_success' => 'Przedmiot został poprawnie zakupiony.',
     'profile_updated' => 'Profil został zaktualizowany.',
     'award_collected_today' => 'Nagroda została już dziś odebrana.',
-    'award_collected' => 'Nagroda została pomyślnie odebrana.',
+    'daily_reward_collected' => 'Dzienna nagroda została odebrana.',
     'no_users_found' => 'No users found.',
     'review_awards' => 'You get awards for review',
     'level_up_title' => "Gratulacje! Osiągnąłeś poziom :level i otrzymałeś następujące nagrody:",
