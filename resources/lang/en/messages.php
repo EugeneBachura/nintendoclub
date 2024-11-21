@@ -8,7 +8,7 @@ return [
     'buy_success' => 'The item has been successfully purchased.',
     'profile_updated' => 'Profile updated successfully!',
     'award_collected_today' => 'The award has already been collected today.',
-    'award_collected' => 'The reward has been successfully collected.',
+    'daily_reward_collected' => 'Daily reward collected successfully!',
     'no_users_found' => 'No users found.',
     'review_awards' => 'You get awards for review',
     'level_up_title' => "Congratulations! You've reached level :level and received the following rewards:",
