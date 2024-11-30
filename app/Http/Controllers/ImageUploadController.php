@@ -8,8 +8,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Manages image uploads and deletions.
+ */
 class ImageUploadController extends Controller
 {
+    /**
+     * Stores an uploaded image.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
         try {
@@ -33,7 +42,7 @@ class ImageUploadController extends Controller
 
             return response()->json([
                 'location' => Storage::url($path),
-                'caption' => $request->input('caption')
+                'caption' => $request->input('caption'),
             ]);
         } catch (\Exception $e) {
             Log::error('Error uploading image: ' . $e->getMessage());
@@ -41,6 +50,12 @@ class ImageUploadController extends Controller
         }
     }
 
+    /**
+     * Deletes an existing image.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function delete(Request $request)
     {
         try {
@@ -49,7 +64,6 @@ class ImageUploadController extends Controller
             ]);
 
             $imagePath = $request->input('imagePath');
-
             $image = Image::where('path', $imagePath)->first();
 
             if (!$image) {
@@ -66,7 +80,7 @@ class ImageUploadController extends Controller
             return response()->json(['success' => 'Image deleted successfully']);
         } catch (\Exception $e) {
             Log::error('Error deleting image: ' . $e->getMessage());
-            return response()->json(['error' => 'Error deleting image: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error deleting image'], 500);
         }
     }
 }
