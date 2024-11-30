@@ -9,34 +9,38 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Handles game management and display.
+ */
 class GameController extends Controller
 {
+    /**
+     * Displays a paginated list of games.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         $games = Game::paginate(20);
         return view('games.index', compact('games'));
     }
 
+    /**
+     * Displays all games with localization and calculated data.
+     *
+     * @return \Illuminate\View\View
+     */
     public function showAll()
     {
-        // Получаем текущую локаль
         $locale = App::getLocale();
-
-        // Загружаем игры с переводами и вычисляем необходимые данные
         $games = Game::paginate(20);
 
         foreach ($games as $game) {
-            // Получаем название игры на текущем языке
             $game->localizedName = $game->getTranslation('name', $locale) ?? $game->name;
-
-            // Вычисляем средний рейтинг
             $game->average_score = $game->average_score ?? 4.9;
-
-            // Определяем цвет рейтинга
             $game->score_color = $this->getScoreColor($game->average_score);
         }
 
-        // Формируем хлебные крошки
         $breadcrumbs = [
             ['title' => __('Games'), 'url' => '']
         ];
@@ -45,7 +49,7 @@ class GameController extends Controller
     }
 
     /**
-     * Определяет цвет рейтинга на основе среднего балла.
+     * Determines the score color based on the average score.
      *
      * @param float $averageScore
      * @return string
@@ -61,14 +65,24 @@ class GameController extends Controller
         }
     }
 
+    /**
+     * Displays the form to create a new game.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
         return view('games.create');
     }
 
+    /**
+     * Stores a new game in the database.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
-        // Валидация данных
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'logo_url' => 'nullable|image|max:255',
@@ -90,18 +104,9 @@ class GameController extends Controller
             'video' => 'nullable|string|max:255',
         ]);
 
-        // Создание новой игры
         $game = new Game();
-        $game->name = $request->name;
-        $game->description = $request->description;
-        $game->release_date = $request->release_date;
-        $game->video = $request->video;
-        $game->platform = $request->platform;
-        $game->developer = $request->developer;
-        $game->publisher = $request->publisher;
-        $game->alias = $request->alias;
-        $game->seo_description = $request->seo_description;
-        $game->seo_keywords = $request->seo_keywords;
+        $game->fill($validatedData);
+
         if ($request->hasFile('cover_image_url')) {
             $cleanedName = preg_replace('/[^A-Za-z0-9\-_]/', '_', $request->name);
             $extension = $request->file('cover_image_url')->getClientOriginalExtension();
@@ -109,95 +114,85 @@ class GameController extends Controller
             $imagePath = $request->cover_image_url->storeAs('games_images', $imageName, 'public');
             $game->cover_image_url = $imagePath;
         }
+
         if ($request->hasFile('logo_url')) {
             $cleanedName = preg_replace('/[^A-Za-z0-9\-_]/', '_', $request->name);
             $extension = $request->file('logo_url')->getClientOriginalExtension();
-            $imageName = 'logo' . '_' . $cleanedName . '.' . $extension;
+            $imageName = 'logo_' . $cleanedName . '.' . $extension;
             $imagePath = $request->logo_url->storeAs('games_images', $imageName, 'public');
             $game->logo_url = $imagePath;
         }
+
         try {
             $game->save();
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error');
         }
 
-
-        // Создание записей локализации для русского и польского языков
-        $game->localizations()->create([
-            'game_id' => $game->id,
-            'locale' => 'ru',
-            'name' => $validatedData['name'],
-            'description' => $validatedData['ru_description'],
-            'seo_description' => $validatedData['ru_seo_description'],
-            'seo_keywords' => $validatedData['ru_seo_keywords'],
-        ]);
-
-        $game->localizations()->create([
-            'game_id' => $game->id,
-            'locale' => 'pl',
-            'name' => $validatedData['name'],
-            'description' => $validatedData['pl_description'],
-            'seo_description' => $validatedData['pl_seo_description'],
-            'seo_keywords' => $validatedData['pl_seo_keywords'],
+        $game->localizations()->createMany([
+            [
+                'game_id' => $game->id,
+                'locale' => 'ru',
+                'name' => $validatedData['name'],
+                'description' => $validatedData['ru_description'],
+                'seo_description' => $validatedData['ru_seo_description'],
+                'seo_keywords' => $validatedData['ru_seo_keywords'],
+            ],
+            [
+                'game_id' => $game->id,
+                'locale' => 'pl',
+                'name' => $validatedData['name'],
+                'description' => $validatedData['pl_description'],
+                'seo_description' => $validatedData['pl_seo_description'],
+                'seo_keywords' => $validatedData['pl_seo_keywords'],
+            ]
         ]);
 
         return redirect()->route('game.create')->with('success', __('message.game_added'));
     }
 
+    /**
+     * Displays the form to edit a game.
+     *
+     * @param int $id
+     * @return \Illuminate\View\View
+     */
     public function edit($id)
     {
         $game = Game::findOrFail($id);
         return view('games.edit', compact('game'));
     }
 
-    public function update(Request $request, $id)
-    {
-        // Валидация данных и обновление игры
-    }
-
+    /**
+     * Displays a game's details based on its alias.
+     *
+     * @param string $alias
+     * @return \Illuminate\View\View
+     */
     public function show($alias)
     {
         $locale = App::getLocale();
-
-        // Получаем игру по алиасу
         $game = Game::where('alias', $alias)->firstOrFail();
 
-        // Локализованные данные игры
         $game->localizedName = $game->getTranslation('name', $locale) ?? $game->name;
         $game->localizedDescription = $game->getTranslation('description', $locale) ?? $game->description;
         $game->localizedSeoDescription = $game->getTranslation('seo_description', $locale) ?? '';
         $game->localizedSeoKeywords = $game->getTranslation('keywords', $locale) ?? '';
-
-        // Вычисляем цвет оценки
         $game->average_score = $game->average_score ?? 4.9;
         $game->score_color = $this->getScoreColor($game->average_score);
-
-        // Форматируем дату релиза
         $releaseDate = date("d-m-Y", strtotime($game->release_date));
-
-        // Проверяем, есть ли несколько платформ
         $isMultiplePlatforms = strpos($game->platform, ',') !== false;
 
-        // Получаем уровень пользователя
         $user = auth()->user();
         $user_level = $user ? $user->profile->level : 0;
 
-        // Получаем отзыв пользователя об игре, если он есть
-        $review = null;
-        if ($user) {
-            $review = Review::where('user_id', $user->id)
-                ->where('game_id', $game->id)
-                ->first();
-        }
+        $review = $user ? Review::where('user_id', $user->id)->where('game_id', $game->id)->first() : null;
 
-        // Получаем другие отзывы об игре
         $reviews = Review::where('game_id', $game->id)
             ->where('status', 'approved')
-            ->with('user.design') // Загружаем отношения пользователя и его дизайн
+            ->with('user.design')
             ->get();
 
-        // Формируем хлебные крошки
         $breadcrumbs = [
             ['title' => __('Games'), 'url' => localized_url('game.showAll')],
             ['title' => $game->localizedName, 'url' => ''],
