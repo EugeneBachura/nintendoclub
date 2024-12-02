@@ -10,36 +10,58 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Handles review management actions for games.
+ */
 class ReviewController extends Controller
 {
-
+    /**
+     * Display a list of reviews.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         $reviews = Review::paginate(30);
         return view('reviews.index', compact('reviews'));
     }
 
+    /**
+     * Display the form for editing a review.
+     *
+     * @param int $id
+     * @return \Illuminate\View\View
+     */
     public function edit($id)
     {
         $review = Review::findOrFail($id);
         return view('reviews.edit', compact('review'));
     }
 
+    /**
+     * Display the form for creating a new review.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
-        // Вывести форму для создания новой рецензии
         return view('reviews.create');
     }
 
+    /**
+     * Store a new review for a game.
+     *
+     * @param Request $request
+     * @param int $gameId
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request, $gameId)
     {
-        // Валидация данных
         $validatedData = $request->validate([
             'content' => 'required|string',
             'rating' => 'required|integer|min:0|max:5',
         ]);
 
-        // Создание новой рецензии
         $review = new Review($validatedData);
         $review->user_id = auth()->user()->id;
         $review->game_id = $gameId;
@@ -56,15 +78,21 @@ class ReviewController extends Controller
         return redirect()->route('game.show', $game->alias)->with('success', __('interfaces.review_success'));
     }
 
+    /**
+     * Update a review for a game.
+     *
+     * @param Request $request
+     * @param int $gameId
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, $gameId, $id)
     {
-        // Валидация данных
         $validatedData = $request->validate([
             'content' => 'required|string',
             'rating' => 'required|integer|min:0|max:5',
         ]);
 
-        // Найти и обновить рецензию
         $review = Review::findOrFail($id);
         $review->language = app()->getLocale();
         $review->status = 'pending';
@@ -78,9 +106,16 @@ class ReviewController extends Controller
         return redirect()->route('game.show', $game->alias)->with('success', __('interfaces.review_updated'));
     }
 
+    /**
+     * Update a review as an admin + rewards.
+     *
+     * @param Request $request
+     * @param int $gameId
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updateForAdmin(Request $request, $gameId, $id)
     {
-        // Валидация данных
         $request->validate([
             'status_text' => 'nullable|string|max:255',
             'status' => 'required|in:published,closed',
@@ -88,15 +123,12 @@ class ReviewController extends Controller
             'language' => 'required|in:en,pl,ru',
         ]);
 
-        // $review = Review::findOrFail($id);
-        // return redirect()->route('review.index')->with('success',  $review->money);
-
-        // Найти и обновить рецензию
         $review = Review::findOrFail($id);
         $review->language = $request->language;
+
         if ($request->status == 'published') {
             if (!$review->awards) $review->awards = 0;
-            $review->awards = $review->awards + $request->money;
+            $review->awards += $request->money;
             $wordCount = substr_count(preg_replace('/\s+/', ' ', trim($review->content)), ' ');
             $review->author->profile->addCoins($request->money);
             $review->author->profile->addExp($wordCount);
@@ -111,6 +143,7 @@ class ReviewController extends Controller
 
             $user->notifyWithLimit(new UserNotification($message, $route));
         }
+
         if ($request->status == 'closed') {
             $review->status_text = $request->status_text;
             $user = User::findOrFail($review->user_id);
@@ -132,19 +165,21 @@ class ReviewController extends Controller
         $game->average_score = $averageScore;
         $game->save();
 
-        return redirect()->route('review.index')->with('success',  __('Review updated'));
+        return redirect()->route('review.index')->with('success', __('Review updated'));
     }
 
+    /**
+     * Count words by single spaces in a text.
+     *
+     * @param string $text
+     * @return int
+     */
     public function countWordsBySingleSpaces($text)
     {
-        // Удаляем пробелы в начале и конце строки
         $trimmedText = trim($text);
-        // Заменяем все последовательности пробелов и пробелы вокруг знаков препинания на одиночные пробелы
         $normalizedText = preg_replace('/\s+/', ' ', $trimmedText);
-        // Считаем единичные пробелы
         $spaceCount = substr_count($normalizedText, ' ');
 
-        // Возвращаем количество слов как количество пробелов + 1 (если строка не пуста)
         return $normalizedText === '' ? 0 : $spaceCount + 1;
     }
 }
