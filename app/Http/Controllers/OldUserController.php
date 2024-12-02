@@ -6,8 +6,16 @@ use App\Models\OldUserData;
 use Exception;
 use Illuminate\Http\Request;
 
+/**
+ * Manages importing old user data into the system.
+ */
 class OldUserController extends Controller
 {
+    /**
+     * Refresh and import old user data from a JSON file.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function refresh()
     {
         $jsonData = json_decode(file_get_contents('6D33u3cGXb/users.json'), true);
