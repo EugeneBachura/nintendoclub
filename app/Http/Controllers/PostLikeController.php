@@ -7,8 +7,17 @@ use App\Models\PostLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Handles toggling likes for posts.
+ */
 class PostLikeController extends Controller
 {
+    /**
+     * Toggle like for a specific post.
+     *
+     * @param int $postId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function toggleLike($postId)
     {
         $user = Auth::user();
@@ -29,7 +38,6 @@ class PostLikeController extends Controller
             ]);
         }
 
-        // Возвращаем обновленное количество лайков
         $updatedLikesCount = $post->likes()->count();
         return response()->json(['likesCount' => $updatedLikesCount]);
     }

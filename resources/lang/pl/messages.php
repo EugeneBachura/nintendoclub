@@ -19,4 +19,5 @@ return [
     'unknown_item' => "Nieznany przedmiot",
     'unknown_badge' => "Nieznana odznaka",
     'login_to_like' => 'Musisz być zalogowany, aby polubić post.',
+    'comment_sent' => 'Komentarz został przesłany i zostanie opublikowany po weryfikacji moderatora'
 ];
