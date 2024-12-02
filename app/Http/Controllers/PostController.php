@@ -10,36 +10,50 @@ use Illuminate\Support\Str;
 use App\Services\KeywordGenerator;
 use Illuminate\Support\Facades\App;
 
+/**
+ * Handles CRUD operations for posts.
+ */
 class PostController extends Controller
 {
-
     protected $keywordGenerator;
 
+    /**
+     * Initialize PostController with a keyword generator service.
+     *
+     * @param KeywordGenerator $keywordGenerator
+     */
     public function __construct(KeywordGenerator $keywordGenerator)
     {
         $this->keywordGenerator = $keywordGenerator;
     }
 
+    /**
+     * Display the list of posts.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         $postsList = Post::paginate(18);
         return view('posts.index', compact('postsList'));
     }
 
+    /**
+     * Display all posts filtered by language and status.
+     *
+     * @return \Illuminate\View\View
+     */
     public function showAll()
     {
-        // Получаем список постов, отфильтрованных по языку, статусу и загружаем связанные категории
         $posts = Post::where('language', app()->getLocale())
             ->where('status', 'active')
             ->with('category')
             ->paginate(18);
 
-        // Добавляем сокращенный контент для постов
         foreach ($posts as $post) {
             $post->trimmedContent = $this->getTrimmedContent($post->content, app()->getLocale());
         }
 
-        // Формируем хлебные крошки
         $breadcrumbs = [
             ['title' => __('titles.all_posts'), 'url' => '']
         ];
@@ -47,6 +61,13 @@ class PostController extends Controller
         return view('posts.showAll', compact('posts', 'breadcrumbs'));
     }
 
+    /**
+     * Trim post content for summary.
+     *
+     * @param string $content
+     * @param string $locale
+     * @return string
+     */
     private function getTrimmedContent($content, $locale)
     {
         $limit = match ($locale) {
@@ -56,76 +77,73 @@ class PostController extends Controller
             default => 100,
         };
 
-        // Убираем HTML-теги из текста
         $plainContent = strip_tags($content);
-
-        // Убираем специальные символы, такие как &nbsp; и другие
         $plainContent = preg_replace('/&nbsp;|•|[^\p{L}\p{N}\s,.!?:;"\'-]+/u', ' ', $plainContent);
-
-        // Сокращаем текст с добавлением "..."
         $ending = '...';
         $trimmedContent = mb_strlen($plainContent) > $limit
             ? mb_substr($plainContent, 0, mb_strripos(mb_substr($plainContent, 0, $limit), ' ')) . $ending
             : $plainContent;
 
-        // Убираем лишние пробелы
         return trim(preg_replace('/\s+/', ' ', $trimmedContent));
     }
 
+    /**
+     * Display posts created by the authenticated user.
+     *
+     * @return \Illuminate\View\View
+     */
     public function showUserPosts()
     {
         $postsList = Post::where('autor_id', auth()->user()->id)->paginate(18);
         return view('posts.index', compact('postsList'));
     }
 
+    /**
+     * Display a specific post with its comments.
+     *
+     * @param Request $request
+     * @param string $alias
+     * @return \Illuminate\View\View
+     */
     public function show(Request $request, $alias)
     {
-        // Получаем текущую локаль приложения
         $locale = App::getLocale();
 
-        // Загружаем пост с комментариями и связями
         $post = Post::with([
             'comments' => function ($query) {
                 $query->where('status', 'approved')
-                    ->whereNull('parent_id') // Только комментарии верхнего уровня
-                    ->with('user') // Пользователь, оставивший комментарий
+                    ->whereNull('parent_id')
+                    ->with('user')
                     ->with(['replies' => function ($query) {
-                        $query->with('user'); // Пользователь, оставивший ответ
+                        $query->with('user');
                     }])
-                    ->orderBy('created_at', 'desc'); // Сортировка по дате создания
+                    ->orderBy('created_at', 'desc');
             },
-            'likes', // Загружаем лайки для поста
+            'likes',
         ])
             ->where('alias', $alias)
-            //->where('language', $locale)
             ->firstOrFail();
 
-        // Увеличиваем количество просмотров
         $post->increment('views_count');
 
-        // Получаем уровень пользователя
         $user = auth()->user();
         $user_level = $user ? $user->profile->level : 0;
 
-        // Обрезаем заголовок для хлебных крошек
         $trimmedTitle = $this->trimTitle($post->title, $locale);
 
-        // Формируем хлебные крошки
         $breadcrumbs = [
             ['title' => __('titles.all_posts'), 'url' => localized_url('post.showAll')],
             ['title' => $trimmedTitle, 'url' => ''],
         ];
 
-        // SEO данные
         $seo_description = $post->seo_description ?? '';
         $seo_keywords = $post->keywords ?? '';
 
-        // Передаём необходимые данные в представление
         return view('posts.show', compact('post', 'user_level', 'breadcrumbs', 'seo_description', 'seo_keywords'));
     }
 
     /**
-     * Обрезает заголовок для хлебных крошек.
+     * Trim post title for breadcrumb.
      *
      * @param string $title
      * @param string $locale
@@ -152,12 +170,23 @@ class PostController extends Controller
         return $trimmed;
     }
 
+    /**
+     * Display the form for creating a new post.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
         $categories = PostCategory::all();
         return view('posts.create', compact('categories'));
     }
 
+    /**
+     * Store a newly created post.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $user = auth()->user();
@@ -167,8 +196,7 @@ class PostController extends Controller
             return redirect()->back()->with('error', 'Your level is too low to create a post. You need a level 3.');
         }
 
-        // Определение правил на основе роли пользователя
-        $statusRules = 'in:under_review'; // По умолчанию, если нет специальных ролей
+        $statusRules = 'in:under_review';
         if (auth()->user()->hasAnyRole(['review_editor', 'administrator'])) {
             $statusRules = 'in:hidden,under_review,deleted,active';
             $request->validate([
@@ -225,6 +253,12 @@ class PostController extends Controller
         return redirect()->route('post.index')->with('success', 'Post created successfully and submitted for review.');
     }
 
+    /**
+     * Display the form for editing a post.
+     *
+     * @param int $id
+     * @return \Illuminate\View\View
+     */
     public function edit($id)
     {
         $post = Post::findOrFail($id);
@@ -232,18 +266,23 @@ class PostController extends Controller
         return view('posts.edit', compact('post', 'categories'));
     }
 
+    /**
+     * Update the specified post.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, $id)
     {
         $post = Post::findOrFail($id);
         $user = auth()->user();
 
-        // Проверка прав на редактирование
         if ($post->author_id !== auth()->id() && !auth()->user()->hasAnyRole(['review_editor', 'administrator'])) {
             return redirect()->back()->with('error', 'You do not have permission to edit this post.');
         }
 
-        // Определение правил на основе роли пользователя
-        $statusRules = 'in:under_review'; // По умолчанию, если нет специальных ролей
+        $statusRules = 'in:under_review';
         if (auth()->user()->hasAnyRole(['review_editor', 'administrator'])) {
             $statusRules = 'in:hidden,under_review,deleted,active';
             $request->validate([
@@ -253,7 +292,7 @@ class PostController extends Controller
                 'image' => 'nullable|image|max:5000',
                 'keywords' => 'nullable|string|max:255',
                 'seo_description' => 'nullable|string|max:1000',
-                'alias' => 'nullable|string|unique:posts,alias,' . $post->id, // Исключаем текущий пост из проверки',
+                'alias' => 'nullable|string|unique:posts,alias,' . $post->id,
                 'language' => 'required|string|max:2',
                 'category_id' => 'required|integer|exists:post_categories,id',
             ]);
@@ -288,9 +327,7 @@ class PostController extends Controller
             $post->category_id = $request->category_id;
         }
 
-
         if ($request->hasFile('image')) {
-            // Удаление старой картинки, если она есть
             if ($post->image) {
                 Storage::delete('public/posts_images/' . $post->image);
             }
@@ -304,6 +341,12 @@ class PostController extends Controller
         return redirect()->route('post.index')->with('success', 'Post updated successfully.');
     }
 
+    /**
+     * Delete the specified post.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
