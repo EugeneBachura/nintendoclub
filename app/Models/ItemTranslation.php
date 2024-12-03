@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemTranslation extends Model
 {
-    //use HasFactory;
     protected $fillable = ['item_id', 'locale', 'name', 'description'];
 
     public function item()

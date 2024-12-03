@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * Class News
+ * 
+ * Represents a news article with translations, author, reviewer, and popularity features.
+ */
 class News extends Model
 {
     use HasFactory;
@@ -17,12 +22,8 @@ class News extends Model
 
     public function getTranslation($field, $locale = null)
     {
-        $locale = $locale ?? app()->getLocale(); // Используйте текущую локаль приложения, если не указано иное
-
-        // Пытаемся найти перевод для заданной локали
+        $locale = $locale ?? app()->getLocale();
         $translation = $this->translations->where('locale', $locale)->first();
-
-        // Возвращаем значение поля, если перевод существует, иначе null
         return $translation ? $translation->{$field} : null;
     }
 
@@ -41,9 +42,11 @@ class News extends Model
         return $this->hasMany(NewsView::class);
     }
 
-    /* Вычисляет цвет на основе популярности новости
-        * @return string
-    */
+    /**
+     * Calculate the color based on the popularity of the news.
+     *
+     * @return string
+     */
     public function getPopularityColor()
     {
         $maxPopularity = 1000;
@@ -56,7 +59,7 @@ class News extends Model
     }
 
     /**
-     * Возвращает сокращённое описание новости для указанного языка.
+     * Get a trimmed version of the news content for the specified locale.
      *
      * @param string|null $locale
      * @param int $limit
@@ -64,14 +67,14 @@ class News extends Model
      */
     public function getTrimmedContent($locale = null, $limit = 100)
     {
-        $locale = $locale ?? app()->getLocale(); // Используем текущую локаль, если не указана
-        $content = $this->getTranslation('content', $locale); // Получаем перевод контента
+        $locale = $locale ?? app()->getLocale();
+        $content = $this->getTranslation('content', $locale);
 
         if (!$content) {
             return '';
         }
 
-        $plainContent = html_entity_decode(strip_tags($content)); // Убираем HTML-теги и декодируем сущности
-        return Str::limit($plainContent, $limit, '...'); // Ограничиваем длину текста
+        $plainContent = html_entity_decode(strip_tags($content));
+        return Str::limit($plainContent, $limit, '...');
     }
 }
