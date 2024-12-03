@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Game model with relationships to profiles, and translations.
+ */
 class Game extends Model
 {
     use HasFactory;
