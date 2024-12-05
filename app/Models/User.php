@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * User model representing application users.
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -18,11 +20,6 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -32,26 +29,23 @@ class User extends Authenticatable
         'nickname',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
+    /**
+     * Send a notification with a limit on the number of stored notifications.
+     *
+     * @param mixed $instance
+     * @param int $limit
+     * @return void
+     */
     public function notifyWithLimit($instance, $limit = 5)
     {
         $this->notify($instance);
@@ -65,8 +59,6 @@ class User extends Authenticatable
 
     public function items()
     {
-        // return $this->belongsToMany(Item::class, 'user_items')
-        //     ->withPivot('quantity');
         return $this->hasMany(UserItem::class);
     }
 
@@ -85,40 +77,27 @@ class User extends Authenticatable
         return $this->hasMany(UserDesignSetting::class);
     }
 
+    /**
+     * Get the colors allowed for the user's nickname.
+     *
+     * @return array<string>
+     */
     public function allowedNicknameColors()
     {
-        $colors = ['#ffffff']; // Базовый цвет
+        $colors = ['#ffffff']; // Base color
 
-        $hasSpecialNookItem = $this->items->contains(function ($userItem) {
-            return $userItem->item->name == 'Nook Inc. Badge';
-        });
-        if ($hasSpecialNookItem) {
-            $colors[] = '#fff300';
-        }
+        $specialItems = [
+            'Nook Inc. Badge' => '#fff300',
+            'Violet Paint' => '#8000FF',
+            'Orange Paint' => '#FF8000',
+            'Green Paint' => '#00FF00',
+            'Blue Paint' => '#2196F3',
+        ];
 
-        $hasSpecialNookItem = $this->items->contains(function ($userItem) {
-            return $userItem->item->name == 'Violet Paint';
-        });
-        if ($hasSpecialNookItem) {
-            $colors[] = '#8000FF';
-        }
-
-        if ($this->items->contains(function ($userItem) {
-            return $userItem->item->name == 'Orange Paint';
-        })) {
-            $colors[] = '#FF8000';
-        }
-
-        if ($this->items->contains(function ($userItem) {
-            return $userItem->item->name == 'Green Paint';
-        })) {
-            $colors[] = '#00FF00';
-        }
-
-        if ($this->items->contains(function ($userItem) {
-            return $userItem->item->name == 'Blue Paint';
-        })) {
-            $colors[] = '#2196F3';
+        foreach ($specialItems as $itemName => $color) {
+            if ($this->items->contains(fn($userItem) => $userItem->item->name == $itemName)) {
+                $colors[] = $color;
+            }
         }
 
         return $colors;
@@ -129,11 +108,21 @@ class User extends Authenticatable
         return $this->belongsToMany(Badge::class, 'user_badges');
     }
 
+    /**
+     * Get the user's nickname.
+     *
+     * @return string
+     */
     public function nickname()
     {
         return $this->nickname;
     }
 
+    /**
+     * Get the user's preferred locale.
+     *
+     * @return string
+     */
     public function preferredLocale()
     {
         return $this->locale ?? app()->getLocale();
