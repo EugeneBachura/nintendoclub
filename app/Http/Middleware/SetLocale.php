@@ -6,17 +6,16 @@ use Closure;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Middleware for setting application locale based on user preference or request parameter.
+ */
 class SetLocale
 {
     public function handle($request, Closure $next)
     {
-        // Определяем поддерживаемые языки
         $supportedLocales = config('localization.supported_locales');
-
-        // Получаем язык из параметра ?lang или из сессии/предпочтений пользователя
         $locale = $request->query('lang', session('locale', Auth::user()->locale ?? config('app.locale')));
 
-        // Устанавливаем локаль только если она поддерживается
         if (in_array($locale, $supportedLocales)) {
             App::setLocale($locale);
             session(['locale' => $locale]);

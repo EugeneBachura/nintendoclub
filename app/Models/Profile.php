@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use App\Notifications\UserNotification;
 
+/**
+ * Profile model managing user experience, coins, badges, and level progression.
+ */
 class Profile extends Model
 {
     use HasFactory;
@@ -40,13 +43,18 @@ class Profile extends Model
         return $this->user->badges();
     }
 
+    /**
+     * Calculate experience required for next level.
+     *
+     * @return int|null
+     */
     public function experienceToNextLevel()
     {
         $currentLevel = $this->level;
         $currentLevelEntry = Level::where('level', $currentLevel)->first();
 
         if (!$currentLevelEntry) {
-            return null; // Если уровень не найден
+            return null;
         }
 
         $nextLevelEntry = Level::where('level', '>', $currentLevel)->orderBy('level')->first();
@@ -54,11 +62,22 @@ class Profile extends Model
         return $nextLevelEntry ? $nextLevelEntry->experience_required : null;
     }
 
+    /**
+     * Get user's nickname.
+     *
+     * @return string
+     */
     public function nickname()
     {
         return $this->user->nickname;
     }
 
+    /**
+     * Add coins to the profile.
+     *
+     * @param int $coins
+     * @return bool
+     */
     public function addCoins($coins)
     {
         Log::info("Adding coins: current value {$this->coins}, adding {$coins}");
@@ -71,14 +90,12 @@ class Profile extends Model
         return true;
     }
 
-    public function toNextLevel($currentLevel)
-    {
-        $currentLevelEntry = Level::where('level', $currentLevel)->firstOrFail();
-        $nextLevelEntry = Level::where('level', '>', $currentLevel)->orderBy('level', 'asc')->first();
-
-        return $nextLevelEntry ? $nextLevelEntry->experience_required : null;
-    }
-
+    /**
+     * Add experience to the profile and handle level ups.
+     *
+     * @param int $exp
+     * @return bool
+     */
     public function addExp($exp)
     {
         Log::info("Adding experience: current value {$this->experience}, adding {$exp}");
@@ -89,7 +106,7 @@ class Profile extends Model
         $this->experience += $exp;
 
         while (true) {
-            $experienceToNextLevel = $this->toNextLevel($this->level);
+            $experienceToNextLevel = $this->experienceToNextLevel($this->level);
 
             if ($experienceToNextLevel === null || $this->experience < $experienceToNextLevel) {
                 break;
@@ -107,6 +124,12 @@ class Profile extends Model
         return true;
     }
 
+    /**
+     * Add premium points to the profile.
+     *
+     * @param int $points
+     * @return bool
+     */
     public function addPremiumPoints($points)
     {
         Log::info("Adding premium points: current value {$this->premium_points}, adding {$points}");
@@ -119,6 +142,12 @@ class Profile extends Model
         return true;
     }
 
+    /**
+     * Add an item to the user's inventory.
+     *
+     * @param int $itemId
+     * @return bool
+     */
     public function addItem($itemId)
     {
         Log::info("Adding item: {$itemId}");
@@ -143,6 +172,12 @@ class Profile extends Model
         return true;
     }
 
+    /**
+     * Add a badge to the user's profile.
+     *
+     * @param int $badgeId
+     * @return bool
+     */
     public function addBadge($badgeId)
     {
         $badge = Badge::findOrFail($badgeId);
@@ -155,6 +190,11 @@ class Profile extends Model
         return true;
     }
 
+    /**
+     * Handle rewards for leveling up.
+     *
+     * @param int $level
+     */
     private function rewardForLevelUp($level)
     {
         $levelEntry = Level::where('level', $level)->firstOrFail();
@@ -188,6 +228,11 @@ class Profile extends Model
         }
     }
 
+    /**
+     * Send notification to user about rewards.
+     *
+     * @param array $rewardsGiven
+     */
     private function sendRewardNotification($rewardsGiven)
     {
         $user = $this->user;

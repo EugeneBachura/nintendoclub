@@ -4,12 +4,35 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
-class Post extends Model
+/**
+ * Class News
+ * 
+ * Represents a news article with translations, author, reviewer, and popularity features.
+ */
+class News extends Model
 {
     use HasFactory;
 
-    protected $appends = ['comments_count'];
+    public function translations()
+    {
+        return $this->hasMany(NewsTranslation::class);
+    }
+
+    /**
+     * Get the translation for the given field and locale.
+     *
+     * @param string $field
+     * @param string|null $locale
+     * @return string|null
+     */
+    public function getTranslation($field, $locale = null)
+    {
+        $locale = $locale ?? app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+        return $translation ? $translation->{$field} : null;
+    }
 
     public function author()
     {
@@ -21,39 +44,44 @@ class Post extends Model
         return $this->belongsTo(User::class, 'reviewer_id');
     }
 
-    public function category()
+    public function views()
     {
-        return $this->belongsTo(PostCategory::class, 'category_id');
+        return $this->hasMany(NewsView::class);
     }
 
-    public function getCategoryNameAttribute()
+    /**
+     * Calculate the color based on the popularity of the news.
+     *
+     * @return string
+     */
+    public function getPopularityColor()
     {
-        $locale = app()->getLocale();
+        $maxPopularity = 1000;
+        $intensity = ($this->popularity / $maxPopularity) + 0.2;
+        $red = 255;
+        $green = 255 * (1 - $intensity);
+        $blue = 0;
 
-        switch ($locale) {
-            case 'en':
-                return $this->category->name_en ?? 'No Category';
-            case 'ru':
-                return $this->category->name_ru ?? 'Без категории';
-            case 'pl':
-                return $this->category->name_pl ?? 'Brak kategorii';
-            default:
-                return $this->category->name_en ?? 'No Category';
+        return "rgb($red, $green, $blue)";
+    }
+
+    /**
+     * Get a trimmed version of the news content for the specified locale.
+     *
+     * @param string|null $locale
+     * @param int $limit
+     * @return string
+     */
+    public function getTrimmedContent($locale = null, $limit = 100)
+    {
+        $locale = $locale ?? app()->getLocale();
+        $content = $this->getTranslation('content', $locale);
+
+        if (!$content) {
+            return '';
         }
-    }
 
-    public function comments()
-    {
-        return $this->hasMany(PostComment::class);
-    }
-
-    public function getCommentsCountAttribute()
-    {
-        return $this->comments()->where('status', 'approved')->count();
-    }
-
-    public function likes()
-    {
-        return $this->hasMany(PostLike::class);
+        $plainContent = html_entity_decode(strip_tags($content));
+        return Str::limit($plainContent, $limit, '...');
     }
 }
