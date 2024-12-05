@@ -21,19 +21,16 @@ class PostComment extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Связь с родительским комментарием
     public function parent()
     {
         return $this->belongsTo(PostComment::class, 'parent_id');
     }
 
-    // Связь с дочерними комментариями
     public function replies()
     {
         return $this->hasMany(PostComment::class, 'parent_id');
     }
 
-    // Связь с лайками комментария
     public function likes()
     {
         return $this->hasMany(PostCommentLike::class, 'comment_id');
