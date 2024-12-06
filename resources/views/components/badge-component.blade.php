@@ -4,12 +4,10 @@
 
 <div class="flex flex-wrap flex-row">
     @php
-        // Limit the badges to display
         $displayBadges = $badges->take($limit);
         $emptySlots = max(0, $limit - $displayBadges->count());
     @endphp
 
-    {{-- Display the badges --}}
     @foreach ($displayBadges as $badge)
         <div x-data="{ open: false }" class="relative mt-2 mr-3">
             <img src="{{ $badge->icon_url }}" alt="{{ $badge->name }}" width="50" height="50"
@@ -23,7 +21,6 @@
         </div>
     @endforeach
 
-    {{-- Empty slots if badges are less than the limit --}}
     @for ($i = 0; $i < $emptySlots; $i++)
         <div x-data="{ open: false }" class="relative mt-2 mr-3">
             <div class="w-12 h-12 border-2 border-background bg-background rounded-full cursor-pointer"

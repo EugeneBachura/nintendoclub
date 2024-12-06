@@ -9,14 +9,11 @@
         <div class="rounded-md ring-1 ring-content_text ring-opacity-25 py-1 bg-content">
             @foreach (['en', 'ru', 'pl'] as $lang)
                 @php
-                    // Получаем текущий маршрут и параметры
                     $routeName = Route::currentRouteName();
                     $routeParameters = Route::current()->parameters();
 
-                    // Добавляем параметр 'lang' для выбранного языка
                     $routeParameters['lang'] = $lang;
 
-                    // Генерируем URL для текущего маршрута с параметром ?lang
                     $url = route($routeName, $routeParameters);
                 @endphp
 
