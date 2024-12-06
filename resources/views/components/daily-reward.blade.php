@@ -100,7 +100,7 @@
                 seconds: '00'
             },
             serverTime: new Date(initialServerTime),
-            loadTime: new Date(), // Время загрузки страницы
+            loadTime: new Date(),
 
             init() {
                 this.updateTimeLeft();
@@ -110,17 +110,14 @@
             },
 
             updateTimeLeft() {
-                // Вычисление текущего времени на сервере, исходя из времени загрузки
                 const currentTime = new Date();
                 const timeSinceLoad = currentTime - this.loadTime;
                 let adjustedServerTime = new Date(this.serverTime.getTime() + timeSinceLoad);
 
-                // Установка 'tomorrow' на следующий день от adjustedServerTime
                 const tomorrow = new Date(adjustedServerTime);
                 tomorrow.setDate(tomorrow.getDate() + 1);
                 tomorrow.setHours(0, 0, 0, 0);
 
-                // Вычисление разницы во времени
                 const timeDiff = tomorrow - adjustedServerTime;
 
                 if (timeDiff >= 0) {
