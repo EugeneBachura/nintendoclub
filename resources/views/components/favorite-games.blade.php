@@ -3,12 +3,10 @@
 
     <div class="flex space-x-3 flex-wrap">
         @php
-            // Limit the games to display
             $displayGames = $favoriteGames->take($limit);
             $emptySlots = max(0, $limit - $displayGames->count());
         @endphp
 
-        {{-- Display games --}}
         @foreach ($displayGames as $game)
             <div x-data="{ open: false }" class="relative">
                 @php
@@ -32,7 +30,6 @@
             </div>
         @endforeach
 
-        {{-- Empty slots if games are less than the limit --}}
         @for ($i = 0; $i < $emptySlots; $i++)
             <div x-data="{ open: false }" class="relative">
                 <div class="w-12 h-12 border-dashed border-2 border-gray-300 rounded-md cursor-pointer"
