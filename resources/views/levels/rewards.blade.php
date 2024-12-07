@@ -73,10 +73,6 @@
                             <div class="flex mt-2">
                                 @if ($level->level != 1)
                                     <div class="flex items-center border border-1 border-grey border-r-0 p-3">
-                                        {{-- @if ($level->level != 1)
-                                        <p class="text font-bold min-w-510px] flex justify-center">
-                                            {{ __('profiles.rewards') }}:</p>
-                                    @endif --}}
                                         <ul
                                             class="list-none mt-1 text-center text-sm flex flex-col justify-center items-center">
                                             @if ($level->coins > 0)

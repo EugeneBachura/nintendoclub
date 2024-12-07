@@ -2,7 +2,6 @@
     {{-- Primary Navigation Menu --}}
     <div class="mx-auto px-4">
         <div class="flex justify-between h-20 items-center">
-            {{-- Logo --}}
             <div class="flex flex-1">
                 <div class="shrink-0 flex items-center">
                     <a href="{{ localized_url('home') }}" class="flex content-center items-center">
@@ -15,7 +14,6 @@
                 </div>
             </div>
 
-            {{-- Navigation Links --}}
             <div class="flex-1 justify-evenly text-base hidden sm:flex">
                 <a href="{{ localized_url('news.showAll') }}"
                     class="flex content-center items-center hover:text-accent-hover">
@@ -36,11 +34,9 @@
                 <x-language-switcher />
 
                 @if (Auth::check())
-                    {{-- User Avatar --}}
                     <x-avatar src="{{ auth()->user()->avatar }}" size="w-10 h-10"
                         class="hidden sm:flex sm:items-center" />
 
-                    {{-- Settings Dropdown --}}
                     <div class="hidden sm:flex sm:items-center sm:ml-1.5">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
@@ -86,7 +82,6 @@
                                     </x-dropdown-link>
                                 @endrole
 
-                                {{-- Logout --}}
                                 <form method="POST" action="{{ localized_url('logout') }}">
                                     @csrf
                                     <x-dropdown-link href="{{ localized_url('logout') }}"
@@ -98,10 +93,8 @@
                         </x-dropdown>
                     </div>
 
-                    {{-- Notifications Dropdown --}}
                     <x-notifications-dropdown />
 
-                    {{-- Hamburger Menu --}}
                     <div class="-mr-2 flex items-center sm:hidden">
                         <button @click="open = ! open"
                             class="inline-flex items-center justify-center p-2 rounded-md text-nav_text hover:text-nav_text-hover focus:outline-none transition duration-150 ease-in-out">
@@ -116,7 +109,6 @@
                         </button>
                     </div>
                 @else
-                    {{-- Login Button --}}
                     <x-button-link href="{{ route('auth.discord') }}"
                         class="bg-discord hover:bg-discord-hover text-discord-text hover:text-light_text-hover text-xs sm:text-sm">
                         {{ __('buttons.login_discord') }}
@@ -129,7 +121,6 @@
     {{-- Responsive Navigation Menu --}}
     @auth
         <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
-            {{-- Responsive Links --}}
             <div class="pt-2 space-y-1">
                 <x-responsive-nav-link href="{{ localized_url('news.showAll') }}">
                     {{ __('titles.news') }}
@@ -142,7 +133,6 @@
                 </x-responsive-nav-link>
             </div>
 
-            {{-- Responsive Settings Options --}}
             <div class="">
                 <div class="mt-1 mb-2 space-y-1">
                     <x-responsive-nav-link href="{{ localized_url('dashboard') }}">
@@ -172,7 +162,6 @@
                         </x-responsive-nav-link>
                     @endrole
 
-                    {{-- Logout --}}
                     <form method="POST" action="{{ localized_url('logout') }}">
                         @csrf
                         <x-responsive-nav-link href="{{ localized_url('logout') }}"
