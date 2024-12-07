@@ -88,9 +88,6 @@
                             value="{{ old('en_title', $news->getTranslation('title', 'en')) }}"
                             description="{{ __('interfaces.maxchar_255') }}" />
                     </div>
-                    {{-- <div class="pb-3 mb-3 space-y-1 relative after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-current after:opacity-10">
-                        <x-textarea id="en_content" name="en_content" value="{{ old('en_content', $news->getTranslation('content', 'en')) }}" class="block mt-1 -ml-1 w-full" rows="5" label="Content" description="Write content"></x-textarea>
-                    </div> --}}
                     <div
                         class="pb-3 mb-3 space-y-1 relative after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-current after:opacity-10">
                         <x-editor name="en_content" label="Content"

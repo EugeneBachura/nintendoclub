@@ -9,15 +9,6 @@
 
     <form method="POST" action="{{ route('news.store') }}" enctype="multipart/form-data" id="newsCreateForm">
         @csrf
-
-        {{-- <div class="pb-3 mb-3 space-y-1 relative after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-current after:opacity-10">
-            <x-input-text id="title" name="title" required label="Title" description="{{__('interfaces.maxchar_255')}}"/>
-        </div> --}}
-
-        {{-- <div class="pb-3 mb-3 space-y-1 relative after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-current after:opacity-10">
-            <x-textarea id="content" name="content" class="block mt-1 -ml-1 w-full" rows="5" required label="Content" description="Write content"></x-textarea>
-        </div> --}}
-
         <div @role('editor') hidden @endrole
             class="pb-3 mb-3 space-y-1 relative after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-current after:opacity-10">
             @php

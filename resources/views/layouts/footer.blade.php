@@ -2,7 +2,6 @@
     <div class="container mx-auto flex justify-between items-center">
         <div>
             <p class="text-lg font-semibold">
-                {{-- Logo --}}
             <div class="shrink-0 flex items-center text-content_text">
                 <a href="{{ localized_url('home') }}" class="flex content-center items-center">
                     <div class="text-sm flex items-center"><span
@@ -36,6 +35,6 @@
 </footer>
 <div class="bg-nav text-content_text py-2">
     <div class="container mx-auto text-center text-xs opacity-50">
-        <p>&copy; 2024 NintendoFan.Club. All Rights Reserved.</p>
+        <p>&copy; 2025 NintendoFan.Club. All Rights Reserved.</p>
     </div>
 </div>
