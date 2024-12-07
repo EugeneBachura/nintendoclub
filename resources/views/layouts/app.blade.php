@@ -30,7 +30,6 @@
     @foreach (config('localization.supported_locales') as $lang)
         @if (Route::current())
             @php
-                // Получаем текущий маршрут и параметры, добавляем нужный язык
                 $routeParameters = array_merge(Route::current()->parameters() ?? [], ['lang' => $lang]);
             @endphp
             <link rel="alternate" hreflang="{{ $lang }}"
@@ -51,7 +50,6 @@
         <div class="min-h-screen min-w-[357px] bg-background text-color_text flex flex-col ">
             @include('layouts.navigation')
             <div class="flex flex-1 justify-center space-x-4 px-2 sm:px-6">
-                {{-- <x-sidebar/> --}}
                 @if (session('rewards'))
                     @php
                         $rewards = session('rewards');

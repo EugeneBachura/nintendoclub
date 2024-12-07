@@ -25,7 +25,6 @@
                         class="text-lg font-semibold text-content_text hover:bg-content-table">
                         <div
                             class="flex items-center px-5 py-4 @if (!$loop->even) bg-content-table2 hover:bg-content-table @endif">
-                            <!-- Логотип игры -->
                             <div class="flex-shrink-0 w-16 h-16 mr-4">
                                 @if ($game->logo_url)
                                     <img src="{{ asset('storage/' . $game->logo_url) }}"
@@ -36,7 +35,6 @@
                                 @endif
                             </div>
 
-                            <!-- Информация об игре: название и дата выхода -->
                             <div class="flex-1">
                                 <div class="text-lg font-semibold text-content_text">
                                     {{ $game->localizedName }}
@@ -46,7 +44,6 @@
                                 </div>
                             </div>
 
-                            <!-- Рейтинг -->
                             <div class="text-right">
                                 <h3
                                     class="text-xl font-semibold rounded-full {{ $game->score_color }} text-successfully-text h-12 w-12 flex items-center justify-center ml-8">
@@ -58,7 +55,6 @@
                 @endforeach
             </div>
         </div>
-        {{-- Пагинация --}}
         <div class="mt-4 m-2">
             {{ $games->links() }}
         </div>
