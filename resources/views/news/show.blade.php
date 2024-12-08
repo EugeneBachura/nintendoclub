@@ -12,7 +12,6 @@
         {{ asset('storage/' . $news->image) }}
     </x-slot>
 
-    {{-- Изображение в заголовке и хлебные крошки --}}
     <x-slot name="header_img">
         <div class="pb-6 px-0 hidden sm:block md:px-6">
             <x-breadcrumb :breadcrumbs="$breadcrumbs" />
@@ -24,7 +23,6 @@
     </x-slot>
     <x-slot name="slim"></x-slot>
 
-    {{-- Контент --}}
     <div class="">
         <div class="flex flex-col sm:flex-row justify-between space-x-4">
             <div class="flex items-center">
@@ -65,7 +63,6 @@
                 <div class="flex w-full justify-center pt-2">
                     @if ($news->video)
                         @php
-                            // Извлекаем ID видео YouTube и формируем embed URL
                             $videoId = null;
                             if (
                                 preg_match(

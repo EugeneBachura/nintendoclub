@@ -100,7 +100,6 @@
                                 document.getElementById('comment-reply-to').classList.remove('hidden');
                                 document.getElementById('comment-form-container').classList.add('sm:pl-12');
 
-                                // Перемещаем форму к комментарию
                                 const formContainer = document.getElementById('comment-form-container');
                                 this.parentElement.parentElement.parentElement.appendChild(formContainer);
 
