@@ -34,7 +34,6 @@
                                             <h3 class="text-lg font-bold">{{ $item->getLocalizedData()['name'] }} x
                                                 {{ $transaction->quantity }}</h3>
                                         </div>
-                                        {{-- <p class="text-sm text-content_text mt-4">{{ $item->getLocalizedData()['description'] }}</p> --}}
                                         <div class="flex sm:justify-between items-center justify-end sm:mt-0 -mt-5">
                                             <span class="text-lg font-bold">
                                                 <x-icon-with-text icon="{{ $transaction->currency }}"
