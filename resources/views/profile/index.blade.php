@@ -36,18 +36,9 @@
                     <x-icon-with-text icon="star" tooltip="{{ __('profiles.stars') }}">
                         0
                     </x-icon-with-text>
-                    {{-- <x-icon-with-text icon="pokeball" tooltip="{{__('profiles.pokeballs')}}">
-                        0
-                    </x-icon-with-text> --}}
-                    {{-- <x-icon-with-text icon="coin" tooltip="Reputation Points">
-                        {{Auth::user()->profile->reputation_count}}
-                    </x-icon-with-text> --}}
                 </div>
             </div>
             <div class="flex flex-wrap flex-col sm:w-full space-y-5 md:flex-row md:space-x-5 md:space-y-0">
-                {{-- <div class="flex-1">
-                    <x-pokemon-component :pokemons="$pokemons" :limit="5" />
-                </div> --}}
                 <div class="flex-1">
                     <x-favorite-games :user-id="$id" :limit="5" />
                 </div>
