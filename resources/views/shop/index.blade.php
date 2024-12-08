@@ -1,5 +1,4 @@
 <x-app-layout>
-    {{-- <x-slot name="slim"></x-slot> --}}
     <x-slot name="header">
         <div class="flex justify-between">
             <div class="flex items-start content-center">
