@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * Class News
- * 
  * Represents a news article with translations, author, reviewer, and popularity features.
  */
 class News extends Model
