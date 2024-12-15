@@ -34,7 +34,7 @@
                 <x-language-switcher />
 
                 @if (Auth::check())
-                    <x-avatar src="{{ auth()->user()->avatar }}" size="w-10 h-10"
+                    <livewire:avatar src="{{ auth()->user()->avatar }}" size="w-10 h-10"
                         class="hidden sm:flex sm:items-center" />
 
                     <div class="hidden sm:flex sm:items-center sm:ml-1.5">

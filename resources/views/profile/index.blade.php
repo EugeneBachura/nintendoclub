@@ -3,7 +3,7 @@
     <x-slot name="header">
         <div class="flex justify-between">
             <div class="flex items-start content-center">
-                <x-avatar src="{{ $avatar }}" size="w-16 h-16" class="sm:flex sm:items-center sm:mr-6 mr-3" />
+                <livewire:avatar src="{{ $avatar }}" size="w-16 h-16" class="sm:flex sm:items-center sm:mr-6 mr-3" />
                 <div class="py-2">
                     <h2 class="font-semibold text-xl text-color_text leading-tight"
                         style="color:{{ $design->nickname_color ?? '#ffffff' }}">
