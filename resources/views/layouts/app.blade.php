@@ -43,8 +43,6 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    @livewireScripts
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body class="font-sans antialiased bg-background">
@@ -200,6 +198,7 @@
     @isset($scripts)
         {{ $script }}
     @endisset
+    @livewireScripts
 </body>
 @include('layouts.footer')
 <!-- Fonts -->
