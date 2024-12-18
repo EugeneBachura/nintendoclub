@@ -10,12 +10,14 @@ use Livewire\Component;
 class Avatar extends Component
 {
     public $src;
-    public $size = 'w-16 h-16';
+    public $size;
+    public $class;
 
-    public function mount($src, $size = 'w-16 h-16')
+    public function mount($src, $size = 'w-16 h-16', $class = '')
     {
         $this->src = $src;
         $this->size = $size;
+        $this->class = $class;
     }
 
     public function render()

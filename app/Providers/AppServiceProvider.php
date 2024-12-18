@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
+use Livewire\Livewire;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -26,9 +28,11 @@ class AppServiceProvider extends ServiceProvider
 
             if ($locale == $defaultLocale) {
                 return "<?php echo route($expression); ?>";
-            }
-            return "<?php echo route($expression, ['locale' => $locale]); ?>";*/
-            return "<?php echo app('url')->route($expression, ['locale' => app()->getLocale()]); ?>";
-        });
-    }
+}
+return "<?php echo route($expression, ['locale' => $locale]); ?>";*/
+return "<?php echo app('url')->route($expression, ['locale' => app()->getLocale()]); ?>";
+});
+Livewire::component('avatar', \App\Http\Livewire\Avatar::class);
+Livewire::component('shop', \App\Http\Livewire\Shop::class);
+}
 }
