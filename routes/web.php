@@ -23,6 +23,7 @@ use App\Models\News;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\Shop;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,8 +64,9 @@ Route::group([
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
         Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-        Route::get('/shop', [ShopController::class, 'index'])->name('shop');
-        Route::post('/shop/buy/{item}', [ShopController::class, 'buy'])->name('shop.buy');
+        // Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+        // Route::post('/shop/buy/{item}', [ShopController::class, 'buy'])->name('shop.buy');
+        Route::get('/shop', Shop::class)->name('shop.index');
         Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory');
         Route::get('/transactions', [ShopController::class, 'history'])->name('transactions.history');
         Route::post('/games/{gameId}/reviews', [ReviewController::class, 'store'])->name('reviews.store');

@@ -58,7 +58,7 @@
                                 <x-dropdown-link href="{{ localized_url('dashboard') }}">
                                     {{ __('titles.dashboard') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link href="{{ localized_url('shop') }}">
+                                <x-dropdown-link href="{{ localized_url('shop.index') }}">
                                     {{ __('titles.shop') }}
                                 </x-dropdown-link>
                                 <x-dropdown-link href="{{ localized_url('inventory') }}">
@@ -138,7 +138,7 @@
                     <x-responsive-nav-link href="{{ localized_url('dashboard') }}">
                         {{ __('titles.dashboard') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link href="{{ localized_url('shop') }}">
+                    <x-responsive-nav-link href="{{ localized_url('shop.index') }}">
                         {{ __('titles.shop') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link href="{{ localized_url('inventory') }}">
