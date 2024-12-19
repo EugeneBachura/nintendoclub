@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Item;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +34,7 @@ class Shop extends Component
         $shopItem = $item->shopItem;
 
         if ($shopItem->quantity !== null && $shopItem->quantity <= 0) {
-            $this->errorMessage = __('messages.no_item');
+            $this->dispatch('notify', 'error', __('messages.no_item'));
             return;
         }
 
@@ -42,15 +42,13 @@ class Shop extends Component
 
         if ($shopItem->currency == 'coins') {
             if ($user->profile->coins < $shopItem->price) {
-                $this->errorMessage = __('messages.insufficient');
+                $this->dispatch('notify', 'error', __('messages.insufficient'));
                 return;
             }
             $user->profile->coins -= $shopItem->price;
-        }
-
-        if ($shopItem->currency == 'premium_points') {
+        } elseif ($shopItem->currency == 'premium_points') {
             if ($user->profile->premium_points < $shopItem->price) {
-                $this->errorMessage = __('messages.insufficient');
+                $this->dispatch('notify', 'error', __('messages.insufficient'));
                 return;
             }
             $user->profile->premium_points -= $shopItem->price;
@@ -60,7 +58,7 @@ class Shop extends Component
             if ($item->max_quantity === null || $userItem->quantity < $item->max_quantity) {
                 $userItem->increment('quantity');
             } else {
-                $this->errorMessage = __('messages.max_items');
+                $this->dispatch('notify', 'error', __('messages.max_items'));
                 return;
             }
         } else {
@@ -84,11 +82,10 @@ class Shop extends Component
 
         $user->profile->save();
 
-        $this->successMessage = __('messages.buy_success');
+        $this->dispatch('notify', 'success', __('messages.buy_success'));
 
         $this->loadItems();
     }
-
 
 
     public function render()
