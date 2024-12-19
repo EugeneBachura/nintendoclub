@@ -50,6 +50,8 @@
         <div class="min-h-screen min-w-[357px] bg-background text-color_text flex flex-col ">
             @include('layouts.navigation')
             <div class="flex flex-1 justify-center space-x-4 px-2 sm:px-6">
+                @livewire('notification')
+
                 @if (session('rewards'))
                     @php
                         $rewards = session('rewards');
