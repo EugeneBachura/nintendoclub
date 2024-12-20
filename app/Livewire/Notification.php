@@ -4,21 +4,38 @@ namespace App\Livewire;
 
 use Livewire\Component;
 
+/**
+ * Manages notification queue and handles display logic.
+ */
 class Notification extends Component
 {
-    public $message;
-    public $type; // success, error, info, warning
+    public $notifications = [];
 
     protected $listeners = ['notify'];
 
+    /**
+     * Adds a new notification to the queue.
+     *
+     * @param string $type Notification type (success, error, info, warning)
+     * @param string $message Notification message
+     */
     public function notify($type, $message)
     {
-        $this->type = $type;
-        $this->message = $message;
+        $this->notifications[] = [
+            'id' => uniqid(),
+            'type' => $type,
+            'message' => $message,
+        ];
 
-        logger('Notification type: ' . $this->type . ', message: ' . $this->message);
+        $this->dispatch('remove-notification');
+    }
 
-        $this->dispatch('hide-notification');
+    /**
+     * Removes the first notification from the queue.
+     */
+    public function removeFirstNotification()
+    {
+        array_shift($this->notifications);
     }
 
     public function render()
