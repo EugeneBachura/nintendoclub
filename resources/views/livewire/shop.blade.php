@@ -11,19 +11,6 @@
         </div>
     </x-slot>
 
-
-    @if ($errorMessage ?? false)
-        <div class="bg-red-500 text-white text-center py-2 rounded mt-4">
-            {{ $errorMessage }}
-        </div>
-    @endif
-
-    @if ($successMessage ?? false)
-        <div class="bg-green-500 text-white text-center py-2 rounded mt-4">
-            {{ $successMessage }}
-        </div>
-    @endif
-
     <div class="max-w-7xl mx-auto">
         <div class="overflow-hidden shadow-sm sm:rounded-lg">
             <div class="sm:p-6">
