@@ -31,9 +31,9 @@ class Notification extends Component
     }
 
     /**
-     * Removes the first notification from the queue.
+     * Removes the oldest notification from the queue.
      */
-    public function removeFirstNotification()
+    public function removeOldestNotification()
     {
         array_shift($this->notifications);
     }

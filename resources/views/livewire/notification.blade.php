@@ -1,7 +1,7 @@
 <div x-data="{ notifications: @entangle('notifications') }" class="fixed bottom-5 right-5 space-y-3 z-50">
     <template x-for="notification in notifications" :key="notification.id">
         <div x-data="{ visible: true }" x-init="setTimeout(() => { visible = false }, 4500);
-        setTimeout(() => { $wire.call('removeFirstNotification') }, 5000);" x-show="visible"
+        setTimeout(() => { $wire.call('removeOldestNotification') }, 5000);" x-show="visible"
             x-transition:enter="transition ease-out duration-500 transform"
             x-transition:enter-start="translate-y-2 opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
             x-transition:leave="transition ease-in duration-500 transform"
