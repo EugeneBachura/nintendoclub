@@ -50,7 +50,6 @@
 
         </div>
         <div class="flex flex-col space-y-4">
-            {{-- Первый ряд: первые две новости --}}
             <div class="flex flex-wrap -mx-4 space-y-4 sm:space-y-0">
                 @foreach ($topNews as $index => $news)
                     @if ($index < 2)
@@ -91,7 +90,6 @@
                 @endforeach
             </div>
 
-            {{-- <!-- Второй ряд: оставшиеся три новости --> --}}
             <div class="flex flex-wrap -mx-4 space-y-4 sm:space-y-0">
                 @foreach ($topNews as $index => $news)
                     @if ($index >= 2)

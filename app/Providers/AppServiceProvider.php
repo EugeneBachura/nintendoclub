@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
+use Livewire\Livewire;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -21,13 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Blade::directive('localizedRoute', function ($expression) {
-            /*$locale = app()->getLocale();
-            $defaultLocale = 'en';
 
-            if ($locale == $defaultLocale) {
-                return "<?php echo route($expression); ?>";
-            }
-            return "<?php echo route($expression, ['locale' => $locale]); ?>";*/
             return "<?php echo app('url')->route($expression, ['locale' => app()->getLocale()]); ?>";
         });
     }
