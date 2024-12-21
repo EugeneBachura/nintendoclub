@@ -1,6 +1,6 @@
 # NintendoClub
 
-**NintendoClub** is a non-commercial project that I created using **PHP Laravel** and styled with **Tailwind CSS**. This website was developed as a personal endeavor separate from my professional work, inspired by my own interests.
+**NintendoClub** is a non-commercial project that I created using **PHP Laravel**, **Alpine.js**, **Livewire** and styled with **Tailwind CSS**. This website was developed as a personal endeavor separate from my professional work, inspired by my own interests.
 
 ## Features
 
