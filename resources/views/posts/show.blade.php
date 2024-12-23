@@ -35,29 +35,9 @@
             </div>
             <div class="pl-3 flex justify-end space-x-1">
                 <div class="flex space-x-3">
-                    @php
-                        $isLiked = $post->likes->contains('user_id', Auth::id());
-                    @endphp
-
-                    <div class="like-container flex justify-end" data-post-id="{{ $post->id }}"
-                        data-is-liked="{{ $isLiked ? 'true' : 'false' }}" @guest data-guest="true" @endguest>
-                        @auth
-                            <x-icon-with-text icon="like" fill="#ff3b3c" class="like-icon active"
-                                style="{{ $isLiked ? '' : 'display:none;' }}">
-                                <span class="likes-count">{{ $post->likes->count() }}</span>
-                            </x-icon-with-text>
-                            <x-icon-with-text icon="like" fill="#252525" class="like-icon inactive"
-                                style="{{ !$isLiked ? '' : 'display:none;' }}">
-                                <span class="likes-count">{{ $post->likes->count() }}</span>
-                            </x-icon-with-text>
-                        @else
-                            <x-icon-with-text icon="like" fill="#252525" class="like-icon inactive disabled">
-                                <span class="likes-count">{{ $post->likes->count() }}</span>
-                            </x-icon-with-text>
-                        @endauth
-                    </div>
-                    <x-icon-with-text icon="eye" fill="#ffffff">{{ $post->views_count }}</x-icon-with-text>
-                    <x-icon-with-text icon="comments" fill="#252525">{{ $post->comments_count }}</x-icon-with-text>
+                    @livewire('posts.like-counter', ['postId' => $post->id])
+                    @livewire('posts.view-counter', ['postId' => $post->id])
+                    @livewire('posts.comment-counter', ['postId' => $post->id])
                 </div>
             </div>
         </div>
@@ -178,56 +158,6 @@
                 }
             }
         </style>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const loginToLikeMessage = @json(__('messages.login_to_like'));
-
-                document.querySelectorAll('.like-container').forEach(container => {
-                    if (container.hasAttribute('data-guest')) {
-                        container.addEventListener('click', function() {
-                            alert(loginToLikeMessage);
-                        });
-                    } else {
-                        container.addEventListener('click', function() {
-                            const postId = this.getAttribute('data-post-id');
-                            fetch(`/posts/${postId}/toggle-like`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRF-TOKEN': document.querySelector(
-                                            'meta[name="csrf-token"]').getAttribute('content'),
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json',
-                                    },
-                                    credentials: 'same-origin',
-                                })
-                                .then(response => {
-                                    if (response.status === 403) {
-                                        alert(loginToLikeMessage);
-                                        return null;
-                                    }
-                                    return response.json();
-                                })
-                                .then(data => {
-                                    if (data && data.likesCount !== undefined) {
-                                        const isLiked = this.getAttribute('data-is-liked') ===
-                                            'true';
-                                        this.querySelector('.active').style.display = isLiked ?
-                                            'none' : '';
-                                        this.querySelector('.inactive').style.display = isLiked ?
-                                            '' : 'none';
-                                        this.setAttribute('data-is-liked', isLiked ? 'false' :
-                                            'true');
-                                        this.querySelectorAll('.likes-count').forEach(el => el
-                                            .textContent = data.likesCount);
-                                    }
-                                })
-                                .catch(error => console.error('Error:', error));
-                        });
-                    }
-                });
-            });
-        </script>
 
     </div>
 </x-app-layout>
