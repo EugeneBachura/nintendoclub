@@ -23,4 +23,5 @@ return [
     'games' => 'Игры',
     'users_posts' => 'Посты Пользователей',
     'level_rewards' => 'Награды',
+    'comment_moderation' => 'Модерация Комментариев',
 ];
