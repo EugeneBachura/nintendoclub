@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notifications', function (Blueprint $table) {
-            $table->string('url')->nullable(); // Поле для ссылки
+            $table->string('url')->nullable();
         });
     }
 

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
 
-            $table->unique(['comment_id', 'user_id']); // Гарантируем, что один пользователь может лайкнуть комментарий только один раз
+            $table->unique(['comment_id', 'user_id']);
         });
     }
 
