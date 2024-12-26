@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('language', 2)->default('en');
             $table->unsignedBigInteger('views_count')->default(0);
             $table->bigInteger('popularity')->default(0);
-            // $table->bigInteger('likes')->default(0);
+
             $table->string('title');
             $table->text('content');
             $table->text('seo_description')->nullable();

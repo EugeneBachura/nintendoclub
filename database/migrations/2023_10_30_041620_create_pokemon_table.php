@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('evolution_pokemon_id')->nullable();
             $table->json('types');
             $table->json('stats');
-            $table->string('gender')->default('both'); // male, female, both, none
+            $table->string('gender')->default('both');
             $table->foreignId('pokemon_category_id')->constrained('pokemon_categories');
             $table->timestamps();
         });
