@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('badges', function (Blueprint $table) {
             $table->unsignedBigInteger('parent_id')->nullable()->after('icon_url');
 
-            // Внешний ключ
             $table->foreign('parent_id')->references('id')->on('badges')->onDelete('set null');
         });
     }

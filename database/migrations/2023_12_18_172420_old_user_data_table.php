@@ -13,22 +13,22 @@ return new class extends Migration
     {
         Schema::create('old_user_data', function (Blueprint $table) {
             $table->id();
-            $table->string('discord_id')->unique(); // id в Discord
-            $table->integer('money')->nullable(); // монеты
-            $table->integer('donat')->nullable(); // премиум очки
-            $table->integer('experience')->nullable(); // опыт
-            $table->integer('level')->default(1); // уровень
-            $table->integer('boost')->nullable(); // множитель бонуса
-            $table->string('sw_code')->nullable(); // sw-код друга
-            $table->date('birthday')->nullable(); // дата рождения
-            $table->integer('ticket_count')->nullable(); // количество билетов
-            $table->integer('last_birthday_year')->nullable(); // в каком году отмечалось последний раз день рождение
-            $table->integer('message_count')->nullable(); // количество сообщений на сервере
-            $table->integer('boss_hit_count')->nullable(); // количество ударов по боссу
-            $table->integer('word_game_score')->nullable(); // количество очков в игре слов
-            $table->boolean('is_banned')->default(false); // забанен или нет
-            $table->integer('total_donat')->nullable(); // премиум очки за всё время
-            $table->integer('pokemon_game_score')->nullable(); // количество очков в игре покемонов
+            $table->string('discord_id')->unique();
+            $table->integer('money')->nullable();
+            $table->integer('donat')->nullable();
+            $table->integer('experience')->nullable();
+            $table->integer('level')->default(1);
+            $table->integer('boost')->nullable();
+            $table->string('sw_code')->nullable();
+            $table->date('birthday')->nullable();
+            $table->integer('ticket_count')->nullable();
+            $table->integer('last_birthday_year')->nullable();
+            $table->integer('message_count')->nullable();
+            $table->integer('boss_hit_count')->nullable();
+            $table->integer('word_game_score')->nullable();
+            $table->boolean('is_banned')->default(false);
+            $table->integer('total_donat')->nullable();
+            $table->integer('pokemon_game_score')->nullable();
             $table->timestamps();
         });
     }
