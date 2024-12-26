@@ -17,7 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('item_id')->nullable()->after('premium_points');
             $table->unsignedBigInteger('badge_id')->nullable()->after('item_id');
 
-            // Внешние ключи
             $table->foreign('item_id')->references('id')->on('items')->onDelete('set null');
             $table->foreign('badge_id')->references('id')->on('badges')->onDelete('set null');
         });

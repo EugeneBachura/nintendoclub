@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
-            $table->string('image')->nullable(); // Путь к изображению
+            $table->string('image')->nullable();
             $table->enum('status', ['hidden', 'under_review', 'deleted', 'active']);
-            $table->foreignId('author_id')->constrained('users'); // ID автора
-            $table->foreignId('reviewer_id')->nullable()->constrained('users'); // ID пользователя, принявшего с проверки
-            $table->string('alias'); // Алиас для URL
+            $table->foreignId('author_id')->constrained('users');
+            $table->foreignId('reviewer_id')->nullable()->constrained('users');
+            $table->string('alias');
             $table->string('video')->nullable();
             $table->timestamps();
         });

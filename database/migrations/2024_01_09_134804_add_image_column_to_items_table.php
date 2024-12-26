@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('items', function (Blueprint $table) {
-            $table->string('image')->nullable()->after('name'); // Добавление столбца 'image' после столбца 'name'
+            $table->string('image')->nullable()->after('name');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('items', function (Blueprint $table) {
-            $table->dropColumn('image'); // Удаление столбца при откате миграции
+            $table->dropColumn('image');
         });
     }
 };

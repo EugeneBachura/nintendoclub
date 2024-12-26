@@ -9,7 +9,12 @@ class PostComment extends Model
 {
     use HasFactory;
     protected $table = 'post_comments';
-    protected $fillable = ['post_id', 'user_id', 'parent_id', 'content'];
+    protected $fillable = ['post_id', 'user_id', 'parent_id', 'content', 'status', 'moderated_by'];
+
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_SPAM = 'spam';
 
     public function post()
     {
@@ -38,6 +43,26 @@ class PostComment extends Model
 
     public function design()
     {
-        return User::where('id', $this->user_id)->first()->design()->first() ?? null;
+        return $this->user()?->design();
+    }
+
+    public function getDesignAttribute()
+    {
+        return $this->user?->design()->first();
+    }
+
+    public function moderator()
+    {
+        return $this->belongsTo(User::class, 'moderated_by');
+    }
+
+    public static function getStatuses()
+    {
+        return [
+            self::STATUS_PENDING,
+            self::STATUS_APPROVED,
+            self::STATUS_REJECTED,
+            self::STATUS_SPAM,
+        ];
     }
 }

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('locale', 5)->nullable()->after('email'); // Добавляем колонку locale
+            $table->string('locale', 5)->nullable()->after('email');
         });
     }
 
