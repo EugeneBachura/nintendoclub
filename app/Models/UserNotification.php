@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Models;
 
 use Illuminate\Notifications\Notification;
 
