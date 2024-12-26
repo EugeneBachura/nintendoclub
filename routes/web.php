@@ -19,7 +19,7 @@ use App\Http\Controllers\PostLikeController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShopController;
 use App\Models\Game;
-use App\Models\News;
+use App\Livewire\Comments\Moderation as CommentModeration;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -98,6 +98,7 @@ Route::group([
         Route::get('/notifications/create', [NotificationController::class, 'create'])->name('notifications.create');
         Route::post('/notifications/send', [NotificationController::class, 'send'])->name('notifications.send');
         Route::get('/old_user/refresh', [OldUserController::class, 'refresh'])->name('old_user.refresh');
+        Route::get('/comments/moderation', CommentModeration::class)->name('comments.moderation');
     });
 
     // Only admins, editors, and review editors
